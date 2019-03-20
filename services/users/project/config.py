@@ -3,10 +3,10 @@ import os
 
 
 class BaseConfig:
-  """Base configuration"""
-  TESTING = False
-  SQLALCHEMY_TRACK_MODIFICATIONS = False
-  SECRET_KEY = 'my_precious'  # new
+    """Base configuration"""
+    TESTING = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SECRET_KEY = 'my_precious'  # new
 
 
 class DevelopmentConfig(BaseConfig):

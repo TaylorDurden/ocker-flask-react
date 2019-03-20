@@ -7,7 +7,6 @@ __date__ = '2019/3/17 3:40 AM'
 from flask_testing import TestCase
 from project import create_app, db
 
-
 app = create_app()
 
 

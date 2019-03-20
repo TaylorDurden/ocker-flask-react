@@ -1,15 +1,13 @@
 # services/users/project/__init__.py
-import os, sys
-from flask import Flask, jsonify
+import os
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy  # new
-
 
 # instantiate the db
 db = SQLAlchemy()  # new
 
 
 def create_app(script_info=None):
-
     # instantiate the app
     app = Flask(__name__)
 

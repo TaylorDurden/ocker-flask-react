@@ -167,5 +167,6 @@ class TestUserService(BaseTestCase):
             self.assertIn(b'michael', response.data)
             self.assertIn(b'fletcher', response.data)
 
+
 if __name__ == '__main__':
     unittest.main()
