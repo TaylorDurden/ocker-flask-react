@@ -4,16 +4,10 @@ __date__ = '2019/3/17 3:52 AM'
 
 # services/users/project/api/models.py
 
-import datetime
+from datetime import datetime
 from sqlalchemy.sql import func
 from werkzeug.security import generate_password_hash, check_password_hash
 from project import db
-
-
-class BaseModel(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
-    last_edit_date = db.Column(db.DateTime, default=func.now(), nullable=False)
 
 
 followers = db.Table('followers',
@@ -22,11 +16,12 @@ followers = db.Table('followers',
 )
 
 
-class User(BaseModel):
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(128), nullable=False)
     nickname = db.Column(db.String(64), index=True)
     password_hash = db.Column(db.String(128))
-    openid = db.Column(db.String(64), index=True, unique=True)
+    openid = db.Column(db.String(64))
     email = db.Column(db.String(120), index=True, unique=True)
     phone = db.Column(db.String(120), index=True, unique=True)
     posts = db.relationship('Post', backref='author', lazy='dynamic')
@@ -37,6 +32,8 @@ class User(BaseModel):
         primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
         backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+    created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
+    last_edit_date = db.Column(db.DateTime, default=func.now(), nullable=False)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -73,13 +70,15 @@ class User(BaseModel):
         }
 
 
-class Post(BaseModel):
-    __searchable__ = ['body']
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     like_count = db.Column(db.Integer)
     visit_count = db.Column(db.Integer)
+    created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
+    last_edit_date = db.Column(db.DateTime, default=func.now(), nullable=False)
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
