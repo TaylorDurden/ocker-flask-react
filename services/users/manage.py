@@ -6,7 +6,6 @@ from project import create_app, db
 from project.api.models import User
 import coverage
 
-
 COV = coverage.coverage(
     branch=True,
     include='project/*',
@@ -17,16 +16,15 @@ COV = coverage.coverage(
 )
 COV.start()
 
-
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
 
 
 @cli.command('recreate_db')
 def recreate_db():
-   db.drop_all()
-   db.create_all()
-   db.session.commit()
+    db.drop_all()
+    db.create_all()
+    db.session.commit()
 
 
 @cli.command()
@@ -64,4 +62,4 @@ def cov():
 
 
 if __name__ == '__main__':
-   cli()
+    cli()
