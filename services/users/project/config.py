@@ -6,6 +6,7 @@ class BaseConfig:
     """Base configuration"""
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # SECRET_KEY = '\x836\xbf\x0b\xb9\xca\x17\x89<a\xd1\xc9\xa9\x02fF\x02\xd3\xb2D4\xfa\xae\xe5'
     SECRET_KEY = 'my_precious'
     DEBUG_TB_ENABLED = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False  # new
