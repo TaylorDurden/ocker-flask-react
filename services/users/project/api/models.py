@@ -51,6 +51,9 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def get(self, id):
+        return self.query.filter_by(id=id).first()
+
     def follow(self, user):
         if not self.is_following(user):
             self.followed.append(user)
