@@ -20,7 +20,7 @@ class TestAuthBlueprint(BaseTestCase):
             response = self.client.post(
                 '/auth/register',
                 data=json.dumps(dict(
-                    username='grav007',
+                    username='123456',
                     email='tay1@163.com',
                     password='123456'
                 )),
@@ -94,6 +94,24 @@ class TestAuthBlueprint(BaseTestCase):
             self.assertTrue(data['auth_token'])
             self.assertTrue(response.content_type == JSON_CONTENT_TYPE)
             self.assertEqual(response.status_code, 200)
+
+    def test_non_registered_user_login(self):
+        """ Test for login of non-registered user """
+        with self.client:
+            response = self.client.post(
+                '/auth/login',
+                data=json.dumps(dict(
+                    username='123456',
+                    email='joe@gmail.com',
+                    password='123456'
+                )),
+                content_type=JSON_CONTENT_TYPE
+            )
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'fail')
+            self.assertTrue(data['message'] == '用户不存在.')
+            self.assertTrue(response.content_type == JSON_CONTENT_TYPE)
+            self.assertEqual(response.status_code, 404)
 
 
 if __name__ == '__main__':
