@@ -38,7 +38,7 @@ class TestUserModel(BaseTestCase):
         self.assertTrue(susan.followers.count(), 1)
         self.assertTrue(susan.followers.first().username, 'join')
 
-        join.unfollow(susan)
+        join.un_follow(susan)
         db.session.commit()
         self.assertFalse(join.is_following(susan))
         self.assertEqual(join.followed.count(), 0)
@@ -62,6 +62,8 @@ class TestUserModel(BaseTestCase):
         auth_token = user.encode_auth_token(user.id)
         self.assertTrue(isinstance(auth_token, bytes))
         self.assertTrue(User.decode_auth_token(auth_token) == user.id)
+        self.assertTrue(User.decode_auth_token(
+            auth_token.decode("utf-8")) == 1)
 
 
 if __name__ == '__main__':
