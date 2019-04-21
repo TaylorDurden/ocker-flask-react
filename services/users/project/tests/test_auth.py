@@ -217,7 +217,7 @@ class TestAuthBlueprint(BaseTestCase):
                 )
             )
             data = json.loads(response_logout.data.decode())
-            self.assertTrue(data['status'] == 'fail')
+            self.assertTrue(data['status'] == FAIL)
             print(f'logout data:{data}')
             self.assertTrue(data['message'] == 'Signature expired. Please log in again.')
             self.assertEqual(response_logout.status_code, 401)

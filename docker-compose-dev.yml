@@ -18,22 +18,41 @@ services:
       - DATABASE_TEST_URL=postgres://postgres:postgres@users-db:5432/users_test
     depends_on:
       - users-db
-
-  client:
+  
+  client-admin:
     build:
-      context: ./services/client
-      dockerfile: Dockerfile-dev
+      context: ./client-admin
+      dockerfile: Dockerfile.dev
     volumes:
-      - './services/client:/usr/src/app'
+      - './client-admin:/usr/src/app'
+      - './client-admin/src:/usr/src/app/src'
+      - './client-admin/config:/usr/src/app/config'
+      - './client-admin/mock:/usr/src/app/mock'
       - '/usr/src/app/node_modules'
     ports:
-      - 3007:3000
+      - 8001:8000
     environment:
       - NODE_ENV=development
       - REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
       - CHOKIDAR_USEPOLLING=true # enable hot reloading
     depends_on:
       - users
+
+  # client:
+  #   build:
+  #     context: ./services/client
+  #     dockerfile: Dockerfile-dev
+  #   volumes:
+  #     - './services/client:/usr/src/app'
+  #     - '/usr/src/app/node_modules'
+  #   ports:
+  #     - 3007:3000
+  #   environment:
+  #     - NODE_ENV=development
+  #     - REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
+  #     - CHOKIDAR_USEPOLLING=true # enable hot reloading
+  #   depends_on:
+  #     - users
 
   users-db:
     build:
@@ -54,4 +73,5 @@ services:
       - 80:80
     depends_on:
       - users
-      - client
+      - client-admin
+      #- client
