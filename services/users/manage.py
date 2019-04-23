@@ -1,4 +1,5 @@
-# services/users/manage.py
+# _*_ coding: utf-8 _*_
+#!/usr/bin/env python3
 
 from flask.cli import FlaskGroup
 import unittest
@@ -59,7 +60,6 @@ def cov():
         COV.erase()
         return 0
     return 1
-
 
 if __name__ == '__main__':
     cli()

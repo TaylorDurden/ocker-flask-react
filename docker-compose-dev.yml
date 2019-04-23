@@ -7,7 +7,7 @@ services:
       context: ./services/users
       dockerfile: Dockerfile-dev
     volumes:
-      - './services/users:/usr/src/app'
+      - ./services/users:/usr/src/app
     ports:
       - 5000
     environment:
@@ -24,11 +24,11 @@ services:
       context: ./client-admin
       dockerfile: Dockerfile.dev
     volumes:
-      - './client-admin:/usr/src/app'
-      - './client-admin/src:/usr/src/app/src'
-      - './client-admin/config:/usr/src/app/config'
-      - './client-admin/mock:/usr/src/app/mock'
-      - '/usr/src/app/node_modules'
+      - ./client-admin:/usr/src/app
+      - ./client-admin/src:/usr/src/app/src
+      - ./client-admin/config:/usr/src/app/config
+      - ./client-admin/mock:/usr/src/app/mock
+      - /usr/src/app/node_modules
     ports:
       - 8001:8000
     environment:
@@ -73,5 +73,5 @@ services:
       - 80:80
     depends_on:
       - users
-      - client-admin
+      #- client-admin
       #- client
