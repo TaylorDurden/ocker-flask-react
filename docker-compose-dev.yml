@@ -73,5 +73,5 @@ services:
       - 80:80
     depends_on:
       - users
-      #- client-admin
+      - client-admin
       #- client

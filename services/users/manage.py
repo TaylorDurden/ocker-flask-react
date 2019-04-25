@@ -6,6 +6,7 @@ import unittest
 from project import create_app, db
 from project.api.models import User
 import coverage
+import os
 
 COV = coverage.coverage(
     branch=True,
@@ -60,6 +61,21 @@ def cov():
         COV.erase()
         return 0
     return 1
+
+
+@cli.command()
+def start():
+    """ python manage.py start """
+    os.system('export FLASK_APP=project/__init__.py')
+    os.system('export FLASK_ENV=development')
+    os.system('export APP_SETTINGS=project.config.DevelopmentConfig')
+    os.system(
+        'export DATABASE_URL=postgres://postgres:postgres@localhost:5435/users_dev')
+    os.system(
+        'export DATABASE_TEST_URL=postgres://postgres:postgres@localhost-db:5435/users_test')
+    os.system(
+        'python manage.py run -h 0.0.0.0')
+
 
 if __name__ == '__main__':
     cli()
