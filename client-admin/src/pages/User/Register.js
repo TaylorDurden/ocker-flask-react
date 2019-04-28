@@ -50,7 +50,7 @@ class Register extends Component {
 
   componentDidUpdate() {
     const { form, register } = this.props;
-    const account = form.getFieldValue('mail');
+    const account = form.getFieldValue('email');
     if (register.status === 'ok') {
       router.push({
         pathname: '/user/register-result',
@@ -184,8 +184,20 @@ class Register extends Component {
           <FormattedMessage id="app.register.register" />
         </h3>
         <Form onSubmit={this.handleSubmit}>
+        <FormItem>
+            {getFieldDecorator('username', {
+              rules: [
+                {
+                  required: true,
+                  message: formatMessage({ id: 'validation.username.required' }),
+                },
+              ],
+            })(
+              <Input size="large" placeholder={formatMessage({ id: 'form.username.placeholder' })} />
+            )}
+          </FormItem>
           <FormItem>
-            {getFieldDecorator('mail', {
+            {getFieldDecorator('email', {
               rules: [
                 {
                   required: true,
@@ -250,7 +262,7 @@ class Register extends Component {
               />
             )}
           </FormItem>
-          <FormItem>
+          {/* <FormItem>
             <InputGroup compact>
               <Select
                 size="large"
@@ -311,7 +323,7 @@ class Register extends Component {
                 </Button>
               </Col>
             </Row>
-          </FormItem>
+          </FormItem> */}
           <FormItem>
             <Button
               size="large"

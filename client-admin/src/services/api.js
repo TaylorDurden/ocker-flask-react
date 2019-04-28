@@ -103,15 +103,15 @@ export async function updateFakeList(params) {
   });
 }
 
-export async function fakeAccountLogin(params) {
-  return request('/api/login/account', {
+export async function accountLogin(params) {
+  return request('http://localhost/auth/login', {
     method: 'POST',
     data: params,
   });
 }
 
-export async function fakeRegister(params) {
-  return request('/api/register', {
+export async function register(params) {
+  return request('http://localhost/auth/register', {
     method: 'POST',
     data: params,
   });

@@ -1,5 +1,5 @@
 # _*_ coding: utf-8 _*_
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 from flask.cli import FlaskGroup
 import unittest
@@ -22,8 +22,21 @@ app = create_app()
 cli = FlaskGroup(create_app=create_app)
 
 
+# def __run_env():
+#     os.system('export FLASK_APP=project/__init__.py')
+#     os.system('export FLASK_ENV=development')
+#     os.system('export APP_SETTINGS=project.config.DevelopmentConfig')
+#     os.system(
+#         'export DATABASE_URL=postgres://postgres:postgres@localhost:5432/users_dev')
+#     os.system(
+#         'export DATABASE_TEST_URL=postgres://postgres:postgres@localhost-db:5435/users_test')
+#     os.system(
+#         'python manage.py run -h 0.0.0.0')
+
+
 @cli.command('recreate_db')
 def recreate_db():
+    # __run_env()
     db.drop_all()
     db.create_all()
     db.session.commit()
@@ -32,6 +45,7 @@ def recreate_db():
 @cli.command()
 def test():
     """Runs the tests without code coverage"""
+    # __run_env()
     tests = unittest.TestLoader().discover('project/tests', pattern='test*.py')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():
@@ -42,6 +56,7 @@ def test():
 @cli.command('seed_db')
 def seed_db():
     """Seeds the database."""
+    # __run_env()
     db.session.add(User(username='michael', email="hermanmu@gmail.com"))
     db.session.add(User(username='michaelherman', email="michael@mherman.org"))
     db.session.commit()
@@ -50,6 +65,7 @@ def seed_db():
 @cli.command()
 def cov():
     """Runs the unit tests with coverage."""
+    # __run_env()
     tests = unittest.TestLoader().discover('project/tests')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():
@@ -66,15 +82,16 @@ def cov():
 @cli.command()
 def start():
     """ python manage.py start """
-    os.system('export FLASK_APP=project/__init__.py')
-    os.system('export FLASK_ENV=development')
-    os.system('export APP_SETTINGS=project.config.DevelopmentConfig')
-    os.system(
-        'export DATABASE_URL=postgres://postgres:postgres@localhost:5435/users_dev')
-    os.system(
-        'export DATABASE_TEST_URL=postgres://postgres:postgres@localhost-db:5435/users_test')
-    os.system(
-        'python manage.py run -h 0.0.0.0')
+    # __run_env()
+    # os.system('export FLASK_APP=project/__init__.py')
+    # os.system('export FLASK_ENV=development')
+    # os.system('export APP_SETTINGS=project.config.DevelopmentConfig')
+    # os.system(
+    #     'export DATABASE_URL=postgres://postgres:postgres@localhost:5432/users_dev')
+    # os.system(
+    #     'export DATABASE_TEST_URL=postgres://postgres:postgres@localhost-db:5435/users_test')
+    # os.system(
+    #     'python manage.py run -h 0.0.0.0')
 
 
 if __name__ == '__main__':

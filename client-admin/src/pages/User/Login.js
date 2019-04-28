@@ -83,12 +83,12 @@ class LoginPage extends Component {
               !submitting &&
               this.renderMessage(formatMessage({ id: 'app.login.message-invalid-credentials' }))}
             <UserName
-              name="userName"
-              placeholder={`${formatMessage({ id: 'app.login.userName' })}: admin or user`}
+              name="email"
+              placeholder={`${formatMessage({ id: 'app.login.email' })}: admin or user`}
               rules={[
                 {
                   required: true,
-                  message: formatMessage({ id: 'validation.userName.required' }),
+                  message: formatMessage({ id: 'validation.email.required' }),
                 },
               ]}
             />

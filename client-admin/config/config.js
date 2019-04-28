@@ -79,9 +79,9 @@ export default {
   },
   proxy: {
     '/api/': {
-      target: 'http://localhost:5000/',
+      target: 'http://localhost/',
       changeOrigin: true,
-      pathRewrite: { '^/api': '' },
+      pathRewrite: { '^/': '' },
     },
   },
   ignoreMomentLocale: true,
