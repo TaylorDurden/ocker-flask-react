@@ -76,11 +76,11 @@ class LoginAPI(MethodView):
                     }
                     return make_response(jsonify(response_obj)), 200
             else:
-                responseObject = {
+                response_obj = {
                     'status': 'fail',
                     'message': '用户不存在.'
                 }
-                return make_response(jsonify(responseObject)), 404
+                return make_response(jsonify(response_obj)), 404
         except Exception as e:
             print(e)
             response_obj = {

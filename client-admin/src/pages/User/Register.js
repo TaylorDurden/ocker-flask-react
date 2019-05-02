@@ -18,8 +18,7 @@ const passwordStatusMap = {
   ),
   pass: (
     <div className={styles.warning}>
-      {/* <FormattedMessage id="validation.password.strength.medium" /> */}
-      medium
+      <FormattedMessage id="validation.password.strength.medium" />
     </div>
   ),
   poor: (
@@ -51,7 +50,7 @@ class Register extends Component {
 
   componentDidUpdate() {
     const { form, register } = this.props;
-    const account = form.getFieldValue('mail');
+    const account = form.getFieldValue('email');
     if (register.status === 'ok') {
       router.push({
         pathname: '/user/register-result',
@@ -185,7 +184,7 @@ class Register extends Component {
           <FormattedMessage id="app.register.register" />
         </h3>
         <Form onSubmit={this.handleSubmit}>
-          <FormItem>
+        <FormItem>
             {getFieldDecorator('username', {
               rules: [
                 {
@@ -198,7 +197,7 @@ class Register extends Component {
             )}
           </FormItem>
           <FormItem>
-            {getFieldDecorator('mail', {
+            {getFieldDecorator('email', {
               rules: [
                 {
                   required: true,
