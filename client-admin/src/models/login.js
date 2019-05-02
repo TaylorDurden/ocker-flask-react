@@ -3,7 +3,9 @@ import { stringify } from 'qs';
 import { accountLogin, getFakeCaptcha } from '@/services/api';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
+import { setToken } from '@/utils/auth';
 import { reloadAuthorized } from '@/utils/Authorized';
+import { notification } from 'antd';
 
 export default {
   namespace: 'login',
@@ -21,6 +23,7 @@ export default {
       });
       // Login successfully
       if (response.status === 'success') {
+        setToken(response.auth_token);
         reloadAuthorized();
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
@@ -38,7 +41,10 @@ export default {
         }
         yield put(routerRedux.replace(redirect || '/'));
       }else{
-        
+        notification.error({
+          message: `请求错误 ${response.status}: ${response.message}`,
+          description: response.message,
+        });
       }
     },
 

@@ -1,8 +1,9 @@
 import { routerRedux } from 'dva/router';
 import { stringify } from 'qs';
-import { fakeAccountLogin, getFakeCaptcha } from '@/services/api';
+import { accountLogin, getFakeCaptcha } from '@/services/api';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
+import { notification } from 'antd';
 
 export default {
   namespace: 'register1',
@@ -13,13 +14,13 @@ export default {
 
   effects: {
     *register({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
+      const response = yield call(accountLogin, payload);
       yield put({
         type: 'changeLoginStatus',
         payload: response,
       });
       // Login successfully
-      if (response.status === 'ok') {
+      if (response.status === 'success') {
         reloadAuthorized();
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
@@ -36,6 +37,11 @@ export default {
           }
         }
         yield put(routerRedux.replace(redirect || '/'));
+      }else{
+        notification.error({
+          message: `请求错误 ${response.status}: ${response.message}`,
+          description: response.message,
+        });
       }
     },
 

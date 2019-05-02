@@ -5,6 +5,7 @@ import Link from 'umi/link';
 import { Checkbox, Alert, message, Icon } from 'antd';
 import Login from '@/components/Login';
 import styles from './Login.less';
+import router from 'umi/router';
 
 const { Tab, UserName, Password, Mobile, Captcha, Submit } = Login;
 
