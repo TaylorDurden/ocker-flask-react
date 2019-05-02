@@ -18,7 +18,8 @@ const passwordStatusMap = {
   ),
   pass: (
     <div className={styles.warning}>
-      <FormattedMessage id="validation.password.strength.medium" />
+      {/* <FormattedMessage id="validation.password.strength.medium" /> */}
+      medium
     </div>
   ),
   poor: (
@@ -185,6 +186,18 @@ class Register extends Component {
         </h3>
         <Form onSubmit={this.handleSubmit}>
           <FormItem>
+            {getFieldDecorator('username', {
+              rules: [
+                {
+                  required: true,
+                  message: formatMessage({ id: 'validation.username.required' }),
+                },
+              ],
+            })(
+              <Input size="large" placeholder={formatMessage({ id: 'form.username.placeholder' })} />
+            )}
+          </FormItem>
+          <FormItem>
             {getFieldDecorator('mail', {
               rules: [
                 {
@@ -250,7 +263,7 @@ class Register extends Component {
               />
             )}
           </FormItem>
-          <FormItem>
+          {/* <FormItem>
             <InputGroup compact>
               <Select
                 size="large"
@@ -311,7 +324,7 @@ class Register extends Component {
                 </Button>
               </Col>
             </Row>
-          </FormItem>
+          </FormItem> */}
           <FormItem>
             <Button
               size="large"

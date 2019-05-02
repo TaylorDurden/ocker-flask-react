@@ -19,24 +19,24 @@ services:
     depends_on:
       - users-db
   
-  client-admin:
-    build:
-      context: ./client-admin
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./client-admin:/usr/src/app
-      - ./client-admin/src:/usr/src/app/src
-      - ./client-admin/config:/usr/src/app/config
-      - ./client-admin/mock:/usr/src/app/mock
-      - /usr/src/app/node_modules
-    ports:
-      - 8001:8000
-    environment:
-      - NODE_ENV=development
-      - REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
-      - CHOKIDAR_USEPOLLING=true # enable hot reloading
-    depends_on:
-      - users
+  # client-admin:
+  #   build:
+  #     context: ./client-admin
+  #     dockerfile: Dockerfile.dev
+  #   volumes:
+  #     - ./client-admin:/usr/src/app
+  #     - ./client-admin/src:/usr/src/app/src
+  #     - ./client-admin/config:/usr/src/app/config
+  #     - ./client-admin/mock:/usr/src/app/mock
+  #     - /usr/src/app/node_modules
+  #   ports:
+  #     - 8001:8000
+  #   environment:
+  #     - NODE_ENV=development
+  #     - REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
+  #     - CHOKIDAR_USEPOLLING=true # enable hot reloading
+  #   depends_on:
+  #     - users
 
   # client:
   #   build:
@@ -73,5 +73,5 @@ services:
       - 80:80
     depends_on:
       - users
-      - client-admin
+      # - client-admin
       #- client
