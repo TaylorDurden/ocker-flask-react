@@ -3,8 +3,8 @@ import GetAuthHeader from '@/utils/auth';
 
 
 
-export async function query() {
-  return request('/api/users');
+export async function query(params) {
+  return request(`/api/users?${stringify(params)}`);
 }
 
 export async function queryCurrent() {

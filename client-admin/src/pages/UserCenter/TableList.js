@@ -85,39 +85,43 @@ class TableList extends PureComponent {
     {
       title: '用户名',
       dataIndex: 'username',
-      // render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
+      render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
     },
     {
       title: '邮箱',
       dataIndex: 'email',
     },
     {
-      title: '服务调用次数',
-      dataIndex: 'callNo',
+      title: '上次访问',
+      dataIndex: 'last_seen',
       sorter: true,
-      render: val => `${val} 万`,
-      // mark to display a total number
-      needTotal: true,
+    },
+    {
+      title: '文章数',
+      dataIndex: 'post_count',
+      sorter: true,
+    },
+    {
+      title: '粉丝数',
+      dataIndex: 'follower_count',
+      sorter: true,
+    },
+    {
+      title: '关注数',
+      dataIndex: 'followed_count',
+      sorter: true,
     },
     {
       title: '状态',
       dataIndex: 'status',
       filters: [
         {
-          text: status[0],
-          value: 0,
+          text: "禁用",
+          value: false,
         },
         {
-          text: status[1],
-          value: 1,
-        },
-        {
-          text: status[2],
-          value: 2,
-        },
-        {
-          text: status[3],
-          value: 3,
+          text: "启用",
+          value: true,
         },
       ],
       render(val) {
@@ -145,7 +149,7 @@ class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'rule/fetch',
+      type: 'users/fetch',
     });
   }
 
@@ -170,7 +174,7 @@ class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'rule/fetch',
+      type: 'users/fetch',
       payload: params,
     });
   };
@@ -186,7 +190,7 @@ class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'rule/fetch',
+      type: 'users/fetch',
       payload: {},
     });
   };
@@ -206,7 +210,7 @@ class TableList extends PureComponent {
     switch (e.key) {
       case 'remove':
         dispatch({
-          type: 'rule/remove',
+          type: 'users/remove',
           payload: {
             key: selectedRows.map(row => row.key),
           },
@@ -246,7 +250,7 @@ class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'rule/fetch',
+        type: 'users/fetch',
         payload: values,
       });
     });
@@ -268,7 +272,7 @@ class TableList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'rule/add',
+      type: 'users/add',
       payload: {
         desc: fields.desc,
       },
@@ -282,7 +286,7 @@ class TableList extends PureComponent {
     const { dispatch } = this.props;
     const { formValues } = this.state;
     dispatch({
-      type: 'rule/update',
+      type: 'users/update',
       payload: {
         query: formValues,
         body: {
@@ -345,50 +349,21 @@ class TableList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="规则名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+            <FormItem label="用户名称">
+              {getFieldDecorator('username')(<Input placeholder="请输入" />)}
+            </FormItem>
+          </Col>
+          <Col md={8} sm={24}>
+            <FormItem label="邮箱">
+              {getFieldDecorator('email')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="使用状态">
               {getFieldDecorator('status')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="调用次数">
-              {getFieldDecorator('number')(<InputNumber style={{ width: '100%' }} />)}
-            </FormItem>
-          </Col>
-        </Row>
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="更新日期">
-              {getFieldDecorator('date')(
-                <DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status3')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status4')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
+                  <Option value="false">禁用</Option>
+                  <Option value="true">启用</Option>
                 </Select>
               )}
             </FormItem>
