@@ -9,6 +9,7 @@ from flask import Blueprint, jsonify, request, render_template
 from project.api.models import User
 from project import db
 from sqlalchemy import exc
+from project.config import BaseConfig
 
 users_blueprint = Blueprint('users', __name__, template_folder='./templates')
 
@@ -79,12 +80,9 @@ def get_single_user(user_id):
 @users_blueprint.route('/users', methods=['GET'])
 def get_all_users():
     """Get all users"""
-    response_object = {
-        'status': 'success',
-        'data': {
-            'users': [user.to_json() for user in User.query.all()]
-        }
-    }
+    page = request.args.get('page', 1, type=int)
+    per_page = min(request.args.get('per_page', BaseConfig.LIST_PER_PAGE, type=int), 100)
+    response_object = User.to_collection_dict(User.query, page, per_page, 'users.get_all_users')
     return jsonify(response_object), 200
 
 

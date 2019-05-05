@@ -104,6 +104,7 @@ export async function updateFakeList(params) {
 }
 
 export async function accountLogin(params) {
+  // return request('http://localhost/auth/login', {
   return request('/api/auth/login', {
     method: 'POST',
     data: params,
@@ -111,6 +112,7 @@ export async function accountLogin(params) {
 }
 
 export async function register(params) {
+  // return request('http://localhost/auth/register', {
   return request('/api/auth/register', {
     method: 'POST',
     data: params,

@@ -10,6 +10,7 @@ class BaseConfig:
     SECRET_KEY = 'my_precious'
     DEBUG_TB_ENABLED = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False  # new
+    LIST_PER_PAGE = 20
 
 
 class DevelopmentConfig(BaseConfig):

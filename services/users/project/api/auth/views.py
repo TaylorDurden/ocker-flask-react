@@ -72,7 +72,8 @@ class LoginAPI(MethodView):
                     response_obj = {
                         'status': 'success',
                         'message': '登录成功.',
-                        'auth_token': auth_token.decode()
+                        'auth_token': auth_token.decode(),
+                        'currentAuthority': 'user'
                     }
                     return make_response(jsonify(response_obj)), 200
             else:
@@ -116,9 +117,12 @@ class UserAPI(MethodView):
                     'status': 'success',
                     'data': {
                         'user_id': user.id,
+                        'name': user.username,
+                        'avatar': "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
                         'email': user.email,
                         'active': user.active,
-                        'created_date': user.created_date
+                        'created_date': user.created_date,
+                        'currentAuthority': 'user'
                     }
                 }
                 return make_response(jsonify(response_obj)), 200

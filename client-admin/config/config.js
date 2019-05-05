@@ -78,7 +78,8 @@ export default {
     'primary-color': primaryColor,
   },
   proxy: {
-    '/api/': {
+    '/api': {
+      // target: 'https://preview.pro.ant.design/',
       target: 'http://localhost/',
       changeOrigin: true,
       pathRewrite: { '^/api': '' },

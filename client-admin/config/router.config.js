@@ -54,8 +54,21 @@ export default [
         name: 'new',
         routes: [
           {
-            path: 'new/new-page',
+            path: '/new/new-page',
             name: 'newpage',
+            component: './New/NewPage',
+          },
+        ],
+      },
+      // user
+      {
+        path: '/user-center',
+        icon: 'form',
+        name: 'user-center',
+        routes: [
+          {
+            path: '/user-center/user-list',
+            name: 'user-list',
             component: './New/NewPage',
           },
         ],
