@@ -1,10 +1,12 @@
 import request from '@/utils/request';
 import GetAuthHeader from '@/utils/auth';
-
+import { stringify } from 'qs';
 
 
 export async function query(params) {
-  return request(`/api/users?${stringify(params)}`);
+  return request(`/api/users?${stringify(params)}`, {
+    headers: GetAuthHeader()
+  });
 }
 
 export async function queryCurrent() {

@@ -1,6 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
+import mt from 'moment-timezone'
 import router from 'umi/router';
 import {
   Row,
@@ -27,6 +28,7 @@ import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 import styles from './TableList.less';
 
+mt.tz.setDefault(moment.tz.guess());
 const FormItem = Form.Item;
 const { Step } = Steps;
 const { TextArea } = Input;
@@ -95,6 +97,9 @@ class TableList extends PureComponent {
       title: '上次访问',
       dataIndex: 'last_seen',
       sorter: true,
+      render: (text) =>
+        mt(text).format('YYYY-MM-DD HH:mm:ss')
+      ,
     },
     {
       title: '文章数',
@@ -113,7 +118,7 @@ class TableList extends PureComponent {
     },
     {
       title: '状态',
-      dataIndex: 'status',
+      dataIndex: 'active',
       filters: [
         {
           text: "禁用",
@@ -125,7 +130,7 @@ class TableList extends PureComponent {
         },
       ],
       render(val) {
-        return <Badge status={statusMap[val]} text={status[val]} />;
+        return <Badge status={statusMap[val?1:0]} text={val?"启用":"禁用"} />;
       },
     },
     {

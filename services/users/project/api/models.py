@@ -30,12 +30,12 @@ class PaginatedAPIMixin(object):
     def to_collection_dict(query, page, per_page, endpoint, **kwargs):
         resources = query.paginate(page, per_page, False)
         data = {
-            'items': [item.to_dict() for item in resources.items],
-            '_meta': {
-                'page': page,
-                'per_page': per_page,
+            'list': [item.to_dict() for item in resources.items],
+            'pagination': {
+                'current': page,
+                'pageSize': per_page,
                 'total_pages': resources.pages,
-                'total_items': resources.total
+                'total': resources.total
             },
             '_links': {
                 'self': url_for(endpoint, page=page, per_page=per_page,
@@ -113,6 +113,7 @@ class User(PaginatedAPIMixin, db.Model):
     def to_dict(self, include_email=False):
         data = {
             'id': self.id,
+            'key': self.id,
             'username': self.username,
             'active': self.active,
             'last_seen': self.last_edit_date.isoformat() + 'Z',
