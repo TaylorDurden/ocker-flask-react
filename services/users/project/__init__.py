@@ -27,10 +27,10 @@ def create_app(script_info=None):
     migrate.init_app(app)
 
     from project.api.users import users_blueprint
-    app.register_blueprint(users_blueprint)
+    app.register_blueprint(users_blueprint, url_prefix='/api')
 
     from project.api.auth.views import auth_blueprint
-    app.register_blueprint(auth_blueprint)
+    app.register_blueprint(auth_blueprint, url_prefix='/api')
 
     # shell context for flask shell
     @app.shell_context_processor

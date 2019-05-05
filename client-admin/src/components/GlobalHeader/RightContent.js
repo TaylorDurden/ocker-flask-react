@@ -172,21 +172,34 @@ export default class GlobalHeaderRight extends PureComponent {
             showViewMore
           />
         </NoticeIcon>
-        {currentUser.name ? (
+        {currentUser.data && currentUser.data.name ? (
           <HeaderDropdown overlay={menu}>
             <span className={`${styles.action} ${styles.account}`}>
               <Avatar
                 size="small"
                 className={styles.avatar}
-                src={currentUser.avatar}
+                src={currentUser.data.avatar}
                 alt="avatar"
               />
-              <span className={styles.name}>{currentUser.name}</span>
+              <span className={styles.name}>{currentUser.data.name}</span>
             </span>
           </HeaderDropdown>
         ) : (
           <Spin size="small" style={{ marginLeft: 8, marginRight: 8 }} />
         )}
+
+        {/* <HeaderDropdown overlay={menu}>
+          <span className={`${styles.action} ${styles.account}`}>
+            <Avatar
+              size="small"
+              className={styles.avatar}
+              src={currentUser.avatar}
+              alt="avatar"
+            />
+            <span className={styles.name}>{currentUser.name}</span>
+          </span>
+        </HeaderDropdown> */}
+
         <SelectLang className={styles.action} />
       </div>
     );
