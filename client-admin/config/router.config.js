@@ -63,7 +63,7 @@ export default [
       // user center
       {
         path: '/user-center',
-        icon: 'form',
+        icon: 'team',
         name: 'user-center',
         routes: [
           {

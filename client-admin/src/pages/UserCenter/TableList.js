@@ -102,17 +102,17 @@ class TableList extends PureComponent {
       ,
     },
     {
-      title: '文章数',
+      title: '文章',
       dataIndex: 'post_count',
       sorter: true,
     },
     {
-      title: '粉丝数',
+      title: '粉丝',
       dataIndex: 'follower_count',
       sorter: true,
     },
     {
-      title: '关注数',
+      title: '关注',
       dataIndex: 'followed_count',
       sorter: true,
     },
@@ -179,7 +179,7 @@ class TableList extends PureComponent {
   };
 
   previewItem = id => {
-    router.push(`/profile/basic/${id}`);
+    // router.push(`/profile/basic/${id}`);
   };
 
   handleFormReset = () => {
