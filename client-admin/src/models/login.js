@@ -21,6 +21,7 @@ export default {
       });
       // Login successfully
       if (response.status === 'success') {
+        setAuthority('user');
         reloadAuthorized();
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
@@ -38,7 +39,7 @@ export default {
         }
         yield put(routerRedux.replace(redirect || '/'));
       }else{
-        
+
       }
     },
 
