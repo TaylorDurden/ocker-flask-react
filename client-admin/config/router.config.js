@@ -60,7 +60,7 @@ export default [
           },
         ],
       },
-      // user
+      // user center
       {
         path: '/user-center',
         icon: 'form',
@@ -69,7 +69,7 @@ export default [
           {
             path: '/user-center/user-list',
             name: 'user-list',
-            component: './New/NewPage',
+            component: './UserCenter/TableList',
           },
         ],
       },

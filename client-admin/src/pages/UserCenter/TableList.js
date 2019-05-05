@@ -129,12 +129,6 @@ class TableList extends PureComponent {
       },
     },
     {
-      title: '上次调度时间',
-      dataIndex: 'updatedAt',
-      sorter: true,
-      render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-    },
-    {
       title: '操作',
       render: (text, record) => (
         <Fragment>
@@ -393,7 +387,7 @@ class TableList extends PureComponent {
 
   render() {
     const {
-      rule: { data },
+      users: { data },
       loading,
     } = this.props;
     const { selectedRows, modalVisible, updateModalVisible, stepFormValues } = this.state;

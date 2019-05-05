@@ -44,4 +44,6 @@ export default {
   'menu.editor.koni': '拓扑编辑器',
   'menu.new': '新模块',
   'menu.new.newpage': '新页面',
+  'menu.user-center': '用户中心',
+  'menu.user-center.user-list': '用户列表',
 };
