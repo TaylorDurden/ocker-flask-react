@@ -116,7 +116,7 @@ class User(PaginatedAPIMixin, db.Model):
             'key': self.id,
             'username': self.username,
             'active': self.active,
-            'last_seen': self.last_edit_date.isoformat() + 'Z',
+            'last_edit_date': self.last_edit_date.isoformat() + 'Z',
             'post_count': self.posts.count(),
             'follower_count': self.followers.count(),
             'followed_count': self.followed.count(),

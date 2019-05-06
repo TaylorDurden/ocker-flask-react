@@ -2,6 +2,7 @@ import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import mt from 'moment-timezone'
+import 'moment/locale/zh-cn';
 import router from 'umi/router';
 import {
   Row,
@@ -26,9 +27,13 @@ import {
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
-import styles from './TableList.less';
+import styles from './UserList.less';
 
+moment.locale('zh-cn');
 mt.tz.setDefault(moment.tz.guess());
+
+const DateFormat = "YYYY-MM-DD HH:mm:ss";
+const { RangePicker, MonthPicker } = DatePicker;
 const FormItem = Form.Item;
 const { Step } = Steps;
 const { TextArea } = Input;
@@ -81,12 +86,15 @@ class TableList extends PureComponent {
     selectedRows: [],
     formValues: {},
     stepFormValues: {},
+    startDate: null,
+    endDate: null,
   };
 
   columns = [
     {
       title: '用户名',
       dataIndex: 'username',
+      sorter: true,
       render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
     },
     {
@@ -95,7 +103,7 @@ class TableList extends PureComponent {
     },
     {
       title: '上次访问',
-      dataIndex: 'last_seen',
+      dataIndex: 'last_edit_date',
       sorter: true,
       render: (text) =>
         mt(text).format('YYYY-MM-DD HH:mm:ss')
@@ -163,13 +171,14 @@ class TableList extends PureComponent {
     }, {});
 
     const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
+      current_page: pagination.current,
+      page_size: pagination.pageSize,
       ...formValues,
       ...filters,
     };
     if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
+      params.sort_by = sorter.field;
+      params.order = sorter.order;
     }
 
     dispatch({
@@ -247,10 +256,17 @@ class TableList extends PureComponent {
       this.setState({
         formValues: values,
       });
-
+      let vals = {...values};
+      let last_edit_date = [];
+      if(values.last_edit_date.length > 0) {
+        const start = values.last_edit_date[0]
+        const end = values.last_edit_date[1]
+        last_edit_date[0] = moment(start).utc().format();
+        last_edit_date[1] = moment(end).utc().format();
+      }
       dispatch({
         type: 'users/fetch',
-        payload: values,
+        payload: {...vals, last_edit_date},
       });
     });
   };
@@ -300,6 +316,25 @@ class TableList extends PureComponent {
     this.handleUpdateModalVisible();
   };
 
+  //切换tab的时候的回调函数
+  tabChange=(activeKey)=>{
+    this.setState({
+      startDate:undefined,//开始时间
+      endDate:undefined,  //结束时间
+    })
+  }
+  
+  //时间改变的方法
+  onPickerChange=(date, dateString)=>{
+    console.log("data",date,"dateString",dateString);
+    //这两个参数值antd自带的参数
+    console.log("dateString",dateString[0],"dateString",dateString[1]);
+    this.setState({
+      startDate:dateString[0],
+      endDate:dateString[1],  
+    })
+  }
+
   renderSimpleForm() {
     const {
       form: { getFieldDecorator },
@@ -308,16 +343,16 @@ class TableList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="规则名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+            <FormItem label="用户名">
+              {getFieldDecorator('username')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="使用状态">
+            <FormItem label="状态">
               {getFieldDecorator('status')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
+                  <Option value="0">禁用</Option>
+                  <Option value="1">启用</Option>
                 </Select>
               )}
             </FormItem>
@@ -344,17 +379,13 @@ class TableList extends PureComponent {
     const {
       form: { getFieldDecorator },
     } = this.props;
+    const { startDate, endDate } = this.state;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="用户名称">
               {getFieldDecorator('username')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="邮箱">
-              {getFieldDecorator('email')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -365,6 +396,18 @@ class TableList extends PureComponent {
                   <Option value="true">启用</Option>
                 </Select>
               )}
+            </FormItem>
+          </Col>
+          <Col md={8} sm={24}>
+            <FormItem label="邮箱">
+              {getFieldDecorator('email')(<Input placeholder="请输入" />)}
+            </FormItem>
+          </Col>
+          <Col md={8} sm={24}>
+            <FormItem label="上次访问日期">
+              {getFieldDecorator('last_edit_date')(
+                <RangePicker 
+                  showTime />)}
             </FormItem>
           </Col>
         </Row>

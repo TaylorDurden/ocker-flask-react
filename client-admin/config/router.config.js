@@ -69,7 +69,7 @@ export default [
           {
             path: '/user-center/user-list',
             name: 'user-list',
-            component: './UserCenter/TableList',
+            component: './UserCenter/UserList',
           },
         ],
       },
