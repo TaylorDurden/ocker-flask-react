@@ -32,8 +32,7 @@ import styles from './UserList.less';
 moment.locale('zh-cn');
 mt.tz.setDefault(moment.tz.guess());
 
-const DateFormat = "YYYY-MM-DD HH:mm:ss";
-const { RangePicker, MonthPicker } = DatePicker;
+const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 const { Step } = Steps;
 const { TextArea } = Input;
@@ -256,13 +255,13 @@ class TableList extends PureComponent {
       this.setState({
         formValues: values,
       });
-      let vals = {...values};
-      let last_edit_date = [];
+      const vals = {...values};
+      const last_edit_date = [];
       if(values.last_edit_date.length > 0) {
         const start = values.last_edit_date[0]
         const end = values.last_edit_date[1]
-        last_edit_date[0] = moment(start).utc().format();
-        last_edit_date[1] = moment(end).utc().format();
+        last_edit_date[0] = moment(start).utc().toISOString();
+        last_edit_date[1] = moment(end).utc().toISOString();
       }
       dispatch({
         type: 'users/fetch',
@@ -323,7 +322,7 @@ class TableList extends PureComponent {
       endDate:undefined,  //结束时间
     })
   }
-  
+
   //时间改变的方法
   onPickerChange=(date, dateString)=>{
     console.log("data",date,"dateString",dateString);
@@ -331,7 +330,7 @@ class TableList extends PureComponent {
     console.log("dateString",dateString[0],"dateString",dateString[1]);
     this.setState({
       startDate:dateString[0],
-      endDate:dateString[1],  
+      endDate:dateString[1],
     })
   }
 
@@ -403,10 +402,12 @@ class TableList extends PureComponent {
               {getFieldDecorator('email')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
-          <Col md={8} sm={24}>
+        </Row>
+        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+          <Col md={16} sm={24}>
             <FormItem label="上次访问日期">
               {getFieldDecorator('last_edit_date')(
-                <RangePicker 
+                <RangePicker
                   showTime />)}
             </FormItem>
           </Col>

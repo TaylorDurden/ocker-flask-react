@@ -1,4 +1,5 @@
 # _*_ coding: utf-8 _*_
+
 __author__ = 'taylor'
 __date__ = '2019/3/17 3:44 AM'
 
@@ -7,7 +8,9 @@ __date__ = '2019/3/17 3:44 AM'
 
 import json
 import unittest
-
+import time
+from datetime import datetime
+import datetime as dt
 from project.tests.base import BaseTestCase
 from project.api.models import User
 from project import db
@@ -137,12 +140,33 @@ class TestUserService(BaseTestCase):
             response = self.client.get('/api/users')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(len(data['items']), 2)
-            self.assertIn('michael', data['items'][0]['username'])
+            self.assertEqual(len(data['list']), 2)
+            self.assertIn('michael', data['list'][0]['username'])
             # self.assertIn(
-            #     'michael@mherman.org', data['items'][0]['email'])
-            self.assertIn('fletcher', data['items'][1]['username'])
-            self.assertTrue(data['items'][1]['active'])
+            #     'michael@mherman.org', data['list'][0]['email'])
+            self.assertIn('fletcher', data['list'][1]['username'])
+            self.assertTrue(data['list'][1]['active'])
+
+    def test_all_users_filter_by_last_edit_date_range(self):
+        """Ensure get all users behaves correctly."""
+        add_user('michael', 'michael@mherman.org')
+        time.sleep(1)
+        add_user('fletcher', 'fletcher@notreal.com')
+        with self.client:
+            # e.g 2019-04-30T16:09:38.998Z
+            start_date_str = (datetime.now() - dt.timedelta(days=1)).isoformat() + 'Z'
+            end_date_str = (datetime.now() + dt.timedelta(days=1)).isoformat() + 'Z'
+            response = self.client.get(f'/api/users?last_edit_date%5B0%5D={start_date_str}'
+                                       f'&last_edit_date%5B1%5D={end_date_str}'
+                                       '&sort_by=last_edit_date&order=desc')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['list']), 2)
+            self.assertIn('michael', data['list'][1]['username'])
+            # self.assertIn(
+            #     'michael@mherman.org', data['list'][0]['email'])
+            self.assertIn('fletcher', data['list'][0]['username'])
+            self.assertTrue(data['list'][1]['active'])
 
     def test_main_no_users(self):
         """Ensure the main route behaves correctly when no users have been

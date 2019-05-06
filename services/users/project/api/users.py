@@ -1,11 +1,12 @@
 # _*_ coding: utf-8 _*_
+from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
 __author__ = 'taylor'
 __date__ = '2019/3/17 3:52 AM'
 
 # services/users/project/api/users.py
 
-from flask import Blueprint, jsonify, request, render_template
+from flask import Blueprint, jsonify, request, render_template, json
 from project.api.models import User
 from project import db
 from sqlalchemy import exc, and_, text
@@ -81,20 +82,27 @@ def get_single_user(user_id):
 @users_blueprint.route('/users', methods=['GET'])
 def get_all_users():
     """Get all users"""
+    print(f"request args: {request.args}")
     username = request.args.get('username', "", type=str)
     current_page = request.args.get('current_page', 1, type=int)
     page_size = min(request.args.get('page_size', BaseConfig.LIST_PER_PAGE, type=int), 100)
-    active = False if request.form.get('status', 1, type=int) == 0 else True;
-    last_edit_date = request.form.getlist('last_edit_date')
-    print(last_edit_date)
+    active = False if request.args.get('status', 1, type=int) == 0 else True;
+    # 2019-04-30T16:09:38.998Z
+    start_date = request.args.getlist('last_edit_date[0]')
+    end_date = request.args.getlist('last_edit_date[1]')
+    if len(start_date) and len(end_date):
+        start_date = start_date[0]
+        end_date = end_date[0]
+    print(start_date)
+    print(end_date)
+    datetime_format = "%Y-%m-%d %H:%M:%S"
     sort_by = request.args.get('sort_by', "", type=str)
     order = request.args.get('order', "", type=str)
     query = User.query.filter(User.active == active)
     if username:
         query = User.query.filter(User.username.like(f"%{username}%"))
-    if len(last_edit_date):
-        start_date = last_edit_date[0]
-        end_date = last_edit_date[1]
+    if start_date and end_date:
+        # self.last_edit_date.isoformat() + 'Z'
         query = User.query.filter(User.last_edit_date.between(start_date, end_date))
     query = _build_users_order_by_query(query, sort_by, order)
     response_object = User.to_collection_dict(query, current_page, page_size, 'users.get_all_users')
