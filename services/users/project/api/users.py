@@ -86,7 +86,10 @@ def get_all_users():
     username = request.args.get('username', "", type=str)
     current_page = request.args.get('current_page', 1, type=int)
     page_size = min(request.args.get('page_size', BaseConfig.LIST_PER_PAGE, type=int), 100)
-    active = False if request.args.get('status', 1, type=int) == 0 else True;
+    status = False if request.args.get('status', 1, type=int) == 0 else True;
+    # 用户列表表头上的状态多选
+    active = request.args.get('active', "", type=str)
+    active_list = active.split(',') if len(active) else ""
     # 2019-04-30T16:09:38.998Z
     start_date = request.args.getlist('last_edit_date[0]')
     end_date = request.args.getlist('last_edit_date[1]')
@@ -95,10 +98,11 @@ def get_all_users():
         end_date = end_date[0]
     print(start_date)
     print(end_date)
-    datetime_format = "%Y-%m-%d %H:%M:%S"
     sort_by = request.args.get('sort_by', "", type=str)
     order = request.args.get('order', "", type=str)
-    query = User.query.filter(User.active == active)
+    query = User.query.filter(User.active == status)
+    if len(active_list):
+        query = User.query.filter(User.active.in_(active_list))
     if username:
         query = User.query.filter(User.username.like(f"%{username}%"))
     if start_date and end_date:

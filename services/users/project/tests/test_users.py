@@ -158,7 +158,8 @@ class TestUserService(BaseTestCase):
             end_date_str = (datetime.now() + dt.timedelta(days=1)).isoformat() + 'Z'
             response = self.client.get(f'/api/users?last_edit_date%5B0%5D={start_date_str}'
                                        f'&last_edit_date%5B1%5D={end_date_str}'
-                                       '&sort_by=last_edit_date&order=desc')
+                                       '&sort_by=last_edit_date&order=desc'
+                                       '&active=true%2Cfalse')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['list']), 2)
