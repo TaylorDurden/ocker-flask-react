@@ -1,4 +1,4 @@
-import { queryRule, removeRule, addRule, updateRule } from '@/services/api';
+import { queryRule, batchInactive, inactive, addRule, updateRule } from '@/services/api';
 import { query } from '@/services/user';
 
 export default {
@@ -27,8 +27,16 @@ export default {
       });
       if (callback) callback();
     },
-    *remove({ payload, callback }, { call, put }) {
-      const response = yield call(removeRule, payload);
+    *inactive({ payload, callback }, { call, put }) {
+      const response = yield call(inactive, payload);
+      yield put({
+        type: 'save',
+        payload: response,
+      });
+      if (callback) callback();
+    },
+    *batchInactive({ payload, callback }, { call, put }) {
+      const response = yield call(batchInactive, payload);
       yield put({
         type: 'save',
         payload: response,

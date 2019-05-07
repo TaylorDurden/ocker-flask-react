@@ -13,12 +13,20 @@ export async function queryRule(params) {
   return request(`/api/rule?${stringify(params)}`);
 }
 
-export async function removeRule(params) {
-  return request('/api/rule', {
+export async function inactive(params) {
+  return request('/api/users/inactive', {
     method: 'POST',
     data: {
       ...params,
-      method: 'delete',
+    },
+  });
+}
+
+export async function batchInactive(params) {
+  return request('/api/users/batch-inactive', {
+    method: 'POST',
+    data: {
+      ...params,
     },
   });
 }

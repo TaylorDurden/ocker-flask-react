@@ -215,9 +215,9 @@ class TableList extends PureComponent {
 
     if (selectedRows.length === 0) return;
     switch (e.key) {
-      case 'remove':
+      case 'batch-inactive':
         dispatch({
-          type: 'users/remove',
+          type: 'users/batchInactive',
           payload: {
             key: selectedRows.map(row => row.key),
           },
@@ -442,8 +442,8 @@ class TableList extends PureComponent {
     const { selectedRows, modalVisible, updateModalVisible, stepFormValues } = this.state;
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
-        <Menu.Item key="remove">删除</Menu.Item>
-        <Menu.Item key="approval">批量审批</Menu.Item>
+        <Menu.Item key="batch-inactive">禁用</Menu.Item>
+        {/* <Menu.Item key="approval">批量审批</Menu.Item> */}
       </Menu>
     );
 

@@ -9,9 +9,10 @@ __date__ = '2019/3/17 3:52 AM'
 from flask import Blueprint, jsonify, request, render_template, json
 from project.api.models import User
 from project import db
-from sqlalchemy import exc, and_, text
+from sqlalchemy import exc, and_, text, func
 from project.config import BaseConfig
 from datetime import datetime
+from operator import itemgetter, attrgetter
 
 users_blueprint = Blueprint('users', __name__, template_folder='./templates')
 
@@ -86,7 +87,7 @@ def get_all_users():
     username = request.args.get('username', "", type=str)
     current_page = request.args.get('current_page', 1, type=int)
     page_size = min(request.args.get('page_size', BaseConfig.LIST_PER_PAGE, type=int), 100)
-    status = False if request.args.get('status', 1, type=int) == 0 else True;
+    status = False if request.args.get('status', 1, type=int) == 0 else True
     # 用户列表表头上的状态多选
     active = request.args.get('active', "", type=str)
     active_list = active.split(',') if len(active) else ""
@@ -100,35 +101,51 @@ def get_all_users():
     print(end_date)
     sort_by = request.args.get('sort_by', "", type=str)
     order = request.args.get('order', "", type=str)
-    query = User.query.filter(User.active == status)
+
+    query = db.session.query(User).filter(User.active == status)
     if len(active_list):
-        query = User.query.filter(User.active.in_(active_list))
+        query = db.session.query(User).filter(User.active.in_(active_list))
     if username:
-        query = User.query.filter(User.username.like(f"%{username}%"))
+        query = db.session.query(User).filter(User.username.like(f"%{username}%"))
     if start_date and end_date:
         # self.last_edit_date.isoformat() + 'Z'
-        query = User.query.filter(User.last_edit_date.between(start_date, end_date))
-    query = _build_users_order_by_query(query, sort_by, order)
+        query = db.session.query(User).filter(User.last_edit_date.between(start_date, end_date))
+
+    # foreign_key = ['post_count', 'follower_count', 'followed_count']
+    # print(sort_by not in foreign_key)
+    # if sort_by and sort_by not in foreign_key:
+    #     if order == "ascend":
+    #         query = db.session.query(User).order_by(text(f"{sort_by}"))
+    #     else:
+    #         query = db.session.query(User).order_by(text(f"{sort_by} desc"))
+    # elif sort_by == 'post_count':
+    #     if order == "ascend":
+    #         query = db.session.query(User, text("count(Post.id) as post_count")).join(User.posts) \
+    #             .group_by(User.id).order_by(func.count(Post.id))
+    #         print(query)
+    #     else:
+    #         query = db.session.query(User, text("count(Post.id) as post_count")).join(User.posts) \
+    #             .group_by(User.id).order_by(func.count(Post.id).desc())
+    #         print(query)
+    # else:
+    #     print('sort_by: ' + sort_by)
+    print(query)
     response_object = User.to_collection_dict(query, current_page, page_size, 'users.get_all_users')
+    print("response_object", response_object)
+    sort_keys = {
+        'last_edit_date': 4,
+        'post_count': 5,
+        'follower_count': 6,
+        'followed_count': 7,
+    }
+    if sort_by:
+        print("sorted: ", sorted(response_object['list'], key=itemgetter(sort_by), reverse=order != "ascend"))
+        # response_object['list'] = sorted(response_object['list'], key=itemgetter(sort_by), reverse=order != "ascend")
+        response_object['list'] = sorted(response_object['list'], key=lambda x : x[sort_by], reverse=order != "ascend")
     return jsonify(response_object), 200
 
 
-def _build_users_order_by_query(query, sort_by, order):
-    # if sort_by == "last_seen":
-    #     if order == "ascend":
-    #         query = query.order_by(User.last_edit_date)
-    #     else:
-    #         query = query.order_by(User.last_edit_date.desc())
-    # return query
-    if sort_by:
-        if order == "ascend":
-            query = query.order_by(text(f"{sort_by}"))
-        else:
-            query = query.order_by(text(f"{sort_by} desc"))
-    return query
-
-
-@users_blueprint.route('/', methods=['GET'])
+@users_blueprint.route('/users/index', methods=['GET'])
 def index():
     if request.method == 'POST':
         username = request.form['username']
@@ -136,4 +153,14 @@ def index():
         db.session.add(User(username=username, email=email))
         db.session.commit()
     users = User.query.all()
+    return render_template('index.html', users=users)
+
+
+@users_blueprint.route('/users/batch-inactive', methods=['POST'])
+def batch_inactive():
+    if request.method == 'POST':
+        keys = request.form['key']
+        users = User.query.all()
+        # [user for user in users]
+        # db.session.commit()
     return render_template('index.html', users=users)

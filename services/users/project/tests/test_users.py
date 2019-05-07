@@ -12,7 +12,7 @@ import time
 from datetime import datetime
 import datetime as dt
 from project.tests.base import BaseTestCase
-from project.api.models import User
+from project.api.models import User, Post
 from project import db
 
 
@@ -21,6 +21,13 @@ def add_user(username, email):
     db.session.add(user)
     db.session.commit()
     return user
+
+
+def add_post(body, user_id):
+    post = Post(body=body, user_id=user_id)
+    db.session.add(post)
+    db.session.commit()
+    return post
 
 
 class TestUserService(BaseTestCase):
@@ -148,7 +155,7 @@ class TestUserService(BaseTestCase):
             self.assertTrue(data['list'][1]['active'])
 
     def test_all_users_filter_by_last_edit_date_range(self):
-        """Ensure get all users behaves correctly."""
+        """Ensure get all users filter by last edit date and order by last edit date behaves correctly."""
         add_user('michael', 'michael@mherman.org')
         time.sleep(1)
         add_user('fletcher', 'fletcher@notreal.com')
@@ -167,6 +174,56 @@ class TestUserService(BaseTestCase):
             # self.assertIn(
             #     'michael@mherman.org', data['list'][0]['email'])
             self.assertIn('fletcher', data['list'][0]['username'])
+            self.assertTrue(data['list'][1]['active'])
+
+    def test_all_users_filter_by_last_edit_date_range_order_by_post_count(self):
+        """Ensure get all users order by post count behaves correctly."""
+        mic = add_user('michael', 'michael@mherman.org')
+        add_post('123test', mic.id)
+        time.sleep(1)
+        add_user('fletcher', 'fletcher@notreal.com')
+
+        with self.client:
+            # e.g 2019-04-30T16:09:38.998Z
+            start_date_str = (datetime.now() - dt.timedelta(days=1)).isoformat() + 'Z'
+            end_date_str = (datetime.now() + dt.timedelta(days=1)).isoformat() + 'Z'
+            response = self.client.get(f'/api/users?last_edit_date%5B0%5D={start_date_str}'
+                                       f'&last_edit_date%5B1%5D={end_date_str}'
+                                       '&sort_by=post_count&order=desc'
+                                       '&active=true%2Cfalse')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['list']), 2)
+            self.assertEqual(1, data['list'][0]['post_count'])
+            self.assertIn('michael', data['list'][0]['username'])
+            # self.assertIn(
+            #     'michael@mherman.org', data['list'][0]['email'])
+            self.assertEqual(0, data['list'][1]['post_count'])
+            self.assertIn('fletcher', data['list'][1]['username'])
+            self.assertTrue(data['list'][1]['active'])
+
+    def test_all_users_filter_by_last_edit_date_range_order_by_post_count(self):
+        """Ensure get all users order by follower count behaves correctly."""
+        mic = add_user('michael', 'michael@mherman.org')
+        fle = add_user('fletcher', 'fletcher@notreal.com')
+        mic.follow(fle)
+
+        with self.client:
+            # e.g 2019-04-30T16:09:38.998Z
+            start_date_str = (datetime.now() - dt.timedelta(days=1)).isoformat() + 'Z'
+            end_date_str = (datetime.now() + dt.timedelta(days=1)).isoformat() + 'Z'
+            response = self.client.get('/api/users?sort_by=follower_count&order=desc')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['list']), 2)
+            self.assertEqual(1, data['list'][0]['follower_count'])
+            self.assertEqual(0, data['list'][0]['followed_count'])
+            self.assertIn('michael', data['list'][0]['username'])
+            # self.assertIn(
+            #     'michael@mherman.org', data['list'][0]['email'])
+            self.assertEqual(0, data['list'][1]['follower_count'])
+            self.assertEqual(1, data['list'][1]['followed_count'])
+            self.assertIn('fletcher', data['list'][1]['username'])
             self.assertTrue(data['list'][1]['active'])
 
     def test_main_no_users(self):

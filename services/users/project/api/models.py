@@ -102,6 +102,9 @@ class User(PaginatedAPIMixin, db.Model):
             followers.c.followed_id == user.id
         ).count() > 0
 
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
     def to_json(self):
         return {
             'id': self.id,

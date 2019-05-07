@@ -118,7 +118,7 @@ class UserAPI(MethodView):
                     'data': {
                         'user_id': user.id,
                         'name': user.username,
-                        'avatar': "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
+                        'avatar': user.avatar(20),
                         'email': user.email,
                         'active': user.active,
                         'created_date': user.created_date,
