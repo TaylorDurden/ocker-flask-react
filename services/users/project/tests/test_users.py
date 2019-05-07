@@ -218,18 +218,18 @@ class TestUserService(BaseTestCase):
             self.assertEqual(len(data['list']), 2)
             self.assertEqual(1, data['list'][0]['follower_count'])
             self.assertEqual(0, data['list'][0]['followed_count'])
-            self.assertIn('michael', data['list'][0]['username'])
+            self.assertIn('fletcher', data['list'][0]['username'])
             # self.assertIn(
             #     'michael@mherman.org', data['list'][0]['email'])
             self.assertEqual(0, data['list'][1]['follower_count'])
             self.assertEqual(1, data['list'][1]['followed_count'])
-            self.assertIn('fletcher', data['list'][1]['username'])
+            self.assertIn('michael', data['list'][1]['username'])
             self.assertTrue(data['list'][1]['active'])
 
     def test_main_no_users(self):
         """Ensure the main route behaves correctly when no users have been
         added to the database."""
-        response = self.client.get('/api/')
+        response = self.client.get('/api/users/index')
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'All Users', response.data)
         self.assertIn(b'<p>No users!</p>', response.data)
@@ -240,7 +240,7 @@ class TestUserService(BaseTestCase):
         add_user('michael', 'michael@mherman.org')
         add_user('fletcher', 'fletcher@notreal.com')
         with self.client:
-            response = self.client.get('/api/')
+            response = self.client.get('/api/users/index')
             self.assertEqual(response.status_code, 200)
             self.assertIn(b'All Users', response.data)
             self.assertNotIn(b'<p>No users!</p>', response.data)
