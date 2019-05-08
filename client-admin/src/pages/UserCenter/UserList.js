@@ -129,11 +129,11 @@ class TableList extends PureComponent {
       filters: [
         {
           text: "禁用",
-          value: false,
+          value: 0,
         },
         {
           text: "启用",
-          value: true,
+          value: 1,
         },
       ],
       render(val) {
@@ -257,7 +257,7 @@ class TableList extends PureComponent {
       });
       const vals = {...values};
       const last_edit_date = [];
-      if(values.last_edit_date.length > 0) {
+      if(values.last_edit_date && values.last_edit_date.length > 0) {
         const start = values.last_edit_date[0]
         const end = values.last_edit_date[1]
         last_edit_date[0] = moment(start).utc().toISOString();
@@ -391,8 +391,8 @@ class TableList extends PureComponent {
             <FormItem label="使用状态">
               {getFieldDecorator('status')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="false">禁用</Option>
-                  <Option value="true">启用</Option>
+                  <Option value="0">禁用</Option>
+                  <Option value="1">启用</Option>
                 </Select>
               )}
             </FormItem>
