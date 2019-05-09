@@ -13,6 +13,7 @@ from project.config import BaseConfig
 import jwt
 from flask import url_for
 from hashlib import md5
+
 # from project.api.mixin import PaginatedAPIMixin
 
 followers = db.Table('followers',
@@ -135,7 +136,9 @@ class User(PaginatedAPIMixin, db.Model):
     def encode_auth_token(self, user_id):
         """
         Generates the Auth Token
-        :return: string
+        :param user_id: 
+        :return: 
+        :return: token string
         """
         try:
             payload = {

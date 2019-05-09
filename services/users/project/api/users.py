@@ -110,25 +110,6 @@ def get_all_users():
     if start_date and end_date:
         # self.last_edit_date.isoformat() + 'Z'
         query = db.session.query(User).filter(User.last_edit_date.between(start_date, end_date))
-
-    # foreign_key = ['post_count', 'follower_count', 'followed_count']
-    # print(sort_by not in foreign_key)
-    # if sort_by and sort_by not in foreign_key:
-    #     if order == "ascend":
-    #         query = db.session.query(User).order_by(text(f"{sort_by}"))
-    #     else:
-    #         query = db.session.query(User).order_by(text(f"{sort_by} desc"))
-    # elif sort_by == 'post_count':
-    #     if order == "ascend":
-    #         query = db.session.query(User, text("count(Post.id) as post_count")).join(User.posts) \
-    #             .group_by(User.id).order_by(func.count(Post.id))
-    #         print(query)
-    #     else:
-    #         query = db.session.query(User, text("count(Post.id) as post_count")).join(User.posts) \
-    #             .group_by(User.id).order_by(func.count(Post.id).desc())
-    #         print(query)
-    # else:
-    #     print('sort_by: ' + sort_by)
     print(query)
     response_object = User.to_collection_dict(query, current_page, page_size, 'users.get_all_users')
     print("response_object", response_object)
@@ -157,7 +138,7 @@ def index():
 
 
 @users_blueprint.route('/users/batch-inactive', methods=['POST'])
-def batch_inactive():
+def batch_inactive():   
     if request.method == 'POST':
         keys = request.form['key']
         users = User.query.all()
