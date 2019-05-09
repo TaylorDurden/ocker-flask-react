@@ -210,3 +210,23 @@ class BlacklistToken(db.Model):
             return True
         else:
             return False
+
+
+class Role(db.Model):
+    """
+    Role
+    """
+    __tablename__ = 'role'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(128), nullable=False)
+    desc = db.Column(db.String(256))
+
+
+class UserRole(db.Model):
+    """
+    User Role, many to many
+    """
+    __tablename__= 'user_role'
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
