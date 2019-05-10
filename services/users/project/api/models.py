@@ -219,11 +219,22 @@ class Role(db.Model):
     """
     Role
     """
-    __tablename__ = 'role'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(128), nullable=False)
     desc = db.Column(db.String(256))
+    permissions = db.relationship('RolePermission', backref='role', lazy='dynamic')
+
+
+class RolePermission(db.Model):
+    """
+    Role
+    """
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(128), nullable=False)
+    permissions = db.Column(db.String(256))
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
 
 
 class UserRole(db.Model):
@@ -233,3 +244,4 @@ class UserRole(db.Model):
     __tablename__= 'user_role'
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
