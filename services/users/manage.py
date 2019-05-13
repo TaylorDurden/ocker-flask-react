@@ -57,8 +57,12 @@ def test():
 def seed_db():
     """Seeds the database."""
     # __run_env()
-    db.session.add(User(username='michael', email="hermanmu@gmail.com"))
-    db.session.add(User(username='michaelherman', email="michael@mherman.org"))
+    taylor = User(username='taylor', email="taylor@gmail.com")
+    jack = User(username='jack', email="jack@163.org")
+    db.session.add(taylor)
+    db.session.add(jack)
+    jack.follow(taylor)
+
     db.session.commit()
 
 

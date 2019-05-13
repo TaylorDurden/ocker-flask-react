@@ -60,7 +60,7 @@ export default [
           },
         ],
       },
-      // user center
+      // 用户中心
       {
         path: '/user-center',
         icon: 'team',
@@ -70,6 +70,31 @@ export default [
             path: '/user-center/user-list',
             name: 'user-list',
             component: './UserCenter/UserList',
+          },
+        ],
+      },
+      // 系统设置
+      {
+        path: '/setting-center',
+        icon: 'team',
+        name: 'setting-center',
+        routes: [
+          {
+            path: '/setting-center/role-index',
+            name: 'role-index',
+            component: './Setting/Role/RoleIndex',
+          },
+          {
+            path: '/setting-center/role-create',
+            name: 'role-create',
+            hideInMenu: true,
+            component: './Setting/Role/CreateRole',
+          },
+          {
+            path: '/setting-center/role-edit/:id',
+            name: 'role-edit',
+            hideInMenu: true,
+            component: './Setting/Role/EditRole',
           },
         ],
       },

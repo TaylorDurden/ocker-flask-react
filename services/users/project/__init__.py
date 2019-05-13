@@ -26,8 +26,11 @@ def create_app(script_info=None):
     cors.init_app(app)  # new
     migrate.init_app(app)
 
-    from project.api.users import users_blueprint
+    from project.api.controller.users import users_blueprint
     app.register_blueprint(users_blueprint, url_prefix='/api')
+
+    from project.api.controller.roles import roles_blueprint
+    app.register_blueprint(roles_blueprint, url_prefix='/api')
 
     from project.api.auth.views import auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/api')

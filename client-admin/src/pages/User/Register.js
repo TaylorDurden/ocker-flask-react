@@ -212,7 +212,7 @@ class Register extends Component {
               <Input size="large" placeholder={formatMessage({ id: 'form.email.placeholder' })} />
             )}
           </FormItem>
-          <FormItem help={help}>
+          <FormItem help={help} hasFeedback>
             <Popover
               getPopupContainer={node => node.parentNode}
               content={

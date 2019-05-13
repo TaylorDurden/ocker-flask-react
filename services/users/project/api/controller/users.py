@@ -111,7 +111,7 @@ def get_all_users():
         # self.last_edit_date.isoformat() + 'Z'
         query = db.session.query(User).filter(User.last_edit_date.between(start_date, end_date))
     print(query)
-    response_object = User.to_collection_dict(query, current_page, page_size, 'users.get_all_users')
+    response_object = User.to_paged_dict(query, current_page, page_size, 'users.get_all_users')
     print("response_object", response_object)
     sort_keys = {
         'last_edit_date': 4,

@@ -28,17 +28,19 @@ followers = db.Table('followers',
 
 class PaginatedAPIMixin(object):
     @staticmethod
-    def to_collection_dict(query, page, per_page, endpoint, **kwargs):
+    def to_paged_dict(query, page, per_page, include_fields=True, endpoint=None, **kwargs):
         resources = query.paginate(page, per_page, False)
         data = {
-            'list': [item.to_dict() for item in resources.items],
+            'list': [item.to_dict(include_fields) for item in resources.items],
             'pagination': {
                 'current': page,
                 'pageSize': per_page,
                 'total_pages': resources.pages,
                 'total': resources.total
-            },
-            '_links': {
+            }
+        }
+        if endpoint:
+            data['_links'] = {
                 'self': url_for(endpoint, page=page, per_page=per_page,
                                 **kwargs),
                 'next': url_for(endpoint, page=page + 1, per_page=per_page,
@@ -46,7 +48,6 @@ class PaginatedAPIMixin(object):
                 'prev': url_for(endpoint, page=page - 1, per_page=per_page,
                                 **kwargs) if resources.has_prev else None
             }
-        }
         return data
 
 
@@ -114,7 +115,7 @@ class User(PaginatedAPIMixin, db.Model):
             'active': self.active
         }
 
-    def to_dict(self, include_email=False):
+    def to_dict(self, include_email):
         data = {
             'id': self.id,
             'key': self.id,
@@ -215,7 +216,7 @@ class BlacklistToken(db.Model):
             return False
 
 
-class Role(db.Model):
+class Role(db.Model, PaginatedAPIMixin):
     """
     Role
     """
@@ -225,11 +226,22 @@ class Role(db.Model):
     desc = db.Column(db.String(256))
     permissions = db.relationship('RolePermission', backref='role', lazy='dynamic')
 
+    def to_dict(self, include_permissions=True):
+        data = {
+            'id': self.id,
+            'name': self.name,
+            'desc': self.desc,
+        }
+        if include_permissions:
+            data['permissions'] = self.permissions
+        return data
+
 
 class RolePermission(db.Model):
     """
-    Role
+    Role_Permission
     """
+    __tablename__ = 'role_permission'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(128), nullable=False)
@@ -243,5 +255,6 @@ class UserRole(db.Model):
     """
     __tablename__= 'user_role'
 
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))

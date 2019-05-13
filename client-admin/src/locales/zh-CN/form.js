@@ -4,6 +4,7 @@ export default {
   'form.optional': '（选填）',
   'form.submit': '提交',
   'form.save': '保存',
+  'form.back': '返回',
   'form.username.placeholder': '用户名',
   'form.email.placeholder': '邮箱',
   'form.password.placeholder': '至少6位密码，区分大小写',
