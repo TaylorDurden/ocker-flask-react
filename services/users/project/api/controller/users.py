@@ -14,7 +14,7 @@ from project.config import BaseConfig
 from datetime import datetime
 from operator import itemgetter, attrgetter
 
-users_blueprint = Blueprint('users', __name__, template_folder='./templates')
+users_blueprint = Blueprint('users', __name__, template_folder='../templates')
 
 
 @users_blueprint.route('/users/ping', methods=['GET'])
