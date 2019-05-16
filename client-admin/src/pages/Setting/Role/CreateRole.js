@@ -113,19 +113,12 @@ class CreateRole extends PureComponent {
             permissions: selectedPermissions,
           },
         });
+        message.success('添加成功');
+        this.handleBackClick();
       }
     });
-    // dispatch({
-    //   type: 'roles/add',
-    //   payload: {
-    //     name: fields.name,
-    //     desc: fields.desc,
-    //     selectedPermissions,
-    //   },
-    // });
 
-    message.success('添加成功');
-    this.handleBackClick();
+
   };
 
   callback(key) {
