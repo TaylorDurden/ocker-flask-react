@@ -44,7 +44,7 @@ class ModulePermission(object):
         return {
             'module_name': self.module.name,
             'module': self.module.value,
-            'permissions': [{'name': x.name, 'value': x.value} for x in self.permissions]
+            'permissions': [{'name': x.name, 'label': x.name, 'value': x.value} for x in self.permissions]
         }
 
 

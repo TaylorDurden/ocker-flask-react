@@ -47,7 +47,7 @@ const defaultCheckedList = ['Apple', 'Orange'];
 class CreateRole extends PureComponent {
   state = {
     formValues: {},
-    permissions: {},
+    // permissions: {},
     selectedPermissions: {},
     checkedList: defaultCheckedList,
     indeterminate: true,
@@ -99,16 +99,30 @@ class CreateRole extends PureComponent {
     this.handleBackClick();
   };
 
-  handleSubmit = fields => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'roles/add',
-      payload: {
-        name: fields.name,
-        desc: fields.desc,
-        permissiongs: [],
-      },
+  handleSubmit = e => {
+    const { dispatch, form } = this.props;
+    const { selectedPermissions } = this.state;
+    e.preventDefault();
+    form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        dispatch({
+          type: 'roles/add',
+          payload: {
+            name: values.name,
+            desc: values.desc,
+            permissions: selectedPermissions,
+          },
+        });
+      }
     });
+    // dispatch({
+    //   type: 'roles/add',
+    //   payload: {
+    //     name: fields.name,
+    //     desc: fields.desc,
+    //     selectedPermissions,
+    //   },
+    // });
 
     message.success('添加成功');
     this.handleBackClick();
@@ -118,19 +132,27 @@ class CreateRole extends PureComponent {
     console.log(key);
   }
 
-  onChange = checkedList => {
+  onChange = (module, items, checkedList) => {
+    const modulePermissions = {};
+    modulePermissions[[module]] = checkedList;
+    const { selectedPermissions } = this.state;
+    const newPermissions = {...selectedPermissions, ...modulePermissions};
     this.setState({
-      checkedList,
-      indeterminate: !!checkedList.length && checkedList.length < plainOptions.length,
-      checkAll: checkedList.length === plainOptions.length,
+      selectedPermissions: newPermissions,
+      // checkAll: checkedList.length === items.length,
     });
   };
 
-  onCheckAllChange = e => {
+  onCheckAllChange = (module, items, e) => {
+    const allValues = items.map(item => item.value);
+    const modulePermissions = {};
+    modulePermissions[module] = e.target.checked ? allValues : [];
+    const { selectedPermissions, } = this.state;
+    const newPermissions = {...selectedPermissions, ...modulePermissions};
     this.setState({
-      checkedList: e.target.checked ? plainOptions : [],
-      indeterminate: false,
-      checkAll: e.target.checked,
+      selectedPermissions: newPermissions,
+      // selectedPermissions,
+      // checkAll: e.target.checked,
     });
   };
 
@@ -141,6 +163,7 @@ class CreateRole extends PureComponent {
       form,
     } = this.props;
     console.log(data);
+    const { selectedPermissions } = this.state;
     const { getFieldDecorator } = form;
 
     const formItemLayout = {
@@ -203,18 +226,29 @@ class CreateRole extends PureComponent {
                         <Row key={item.module}>
                           <Col span={8}>
                             <Checkbox
-                              indeterminate={this.state.indeterminate}
-                              onChange={this.onCheckAllChange}
-                              checked={this.state.checkAll}
+                              //indeterminate={this.state.indeterminate}
+                              onChange={this.onCheckAllChange.bind(this, item.module, item.permissions)}
+
                             >
                               {item.module_name}
                             </Checkbox>
                           </Col>
                           <Col span={16}>
+                            {/* {item.permissions &&
+                              item.permissions.map((checkbox, index) => (
+                                <Checkbox
+                                  key={index}
+                                  //indeterminate={this.state.indeterminate}
+                                  onChange={this.onChange}
+                                  // checked={!checkbox.disable}
+                                >
+                                  {checkbox.name}
+                                </Checkbox>
+                              ))} */}
                             <CheckboxGroup
-                              options={item.permissions&&item.permissions.map(x => x.name)}
-                              value={item.permissions&&item.permissions.map(x => x.value)}
-                              onChange={this.onChange}
+                              options={item.permissions}
+                              value={selectedPermissions[item.module]}
+                              onChange={this.onChange.bind(this, item.module, item.permissions)}
                             />
                           </Col>
                         </Row>
