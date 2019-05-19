@@ -1,5 +1,5 @@
 import { queryRule, batchInactive, inactive, addRule, updateRule } from '@/services/api';
-import { query, getPermissionTemplate } from '@/services/role';
+import { query, getPermissionTemplate, newRole } from '@/services/role';
 
 export default {
   namespace: 'roles',
@@ -27,7 +27,7 @@ export default {
       });
     },
     *add({ payload, callback }, { call, put }) {
-      const response = yield call(addRule, payload);
+      const response = yield call(newRole, payload);
       yield put({
         type: 'save',
         payload: response,

@@ -23,16 +23,60 @@ def template():
 def role_page_list():
     current_page = request.args.get('current_page', 1, type=int)
     page_size = min(request.args.get('page_size', BaseConfig.LIST_PER_PAGE, type=int), 100)
-    roles = Role.to_paged_dict(Role.query, current_page, page_size)
-    return jsonify(roles), 200
+
+    roles = Role.to_paged_dict(Role.query, current_page, page_size, include_fields=False)
+    print('roles: ', roles)
+    return jsonify(roles)
+
+
+@roles_blueprint.route('/roles/<role_id>', methods=['GET'])
+def get_role_by(role_id):
+    """Get single user details"""
+    response_object = {
+        'status': 'fail',
+        'message': '角色不存在'
+    }
+    try:
+        role = Role.query.filter_by(id=int(role_id)).first()
+        if not role:
+            return jsonify(response_object), 404
+        else:
+            response_object = {
+                'status': 'success',
+                'data': role.to_dict()
+            }
+            return jsonify(response_object), 200
+    except ValueError:
+        return jsonify(response_object), 404
 
 
 @roles_blueprint.route('/roles', methods=['POST'])
 def new_role():
-    current_page = request.args.get('current_page', 1, type=int)
-    page_size = min(request.args.get('page_size', BaseConfig.LIST_PER_PAGE, type=int), 100)
-    roles = Role.to_paged_dict(Role.query, current_page, page_size)
-    return jsonify(roles), 200
+    post_data = request.get_json()
+    response_object = {
+        'status': 'fail',
+        'message': 'Invalid payload.'
+    }
+    if not post_data:
+        return jsonify(response_object), 400
+
+    role_name = post_data.get('name')
+    role_desc = post_data.get('desc')
+    permissions = post_data.get('permissions')
+    try:
+        if role_name and role_desc and permissions:
+            role = Role.new_role({'name': role_name, 'desc': role_desc, 'permissions': permissions})
+            db.session.add(role)
+            db.session.commit()
+            response_object['status'] = 'success'
+            response_object['message'] = '新增角色成功'
+            return jsonify(response_object), 201
+        else:
+            response_object['message'] = '参数不合法'
+            return jsonify(response_object), 400
+    except exc.IntegrityError:
+        db.session.rollback()
+        return jsonify(response_object), 400
 
 
 @roles_blueprint.route('/roles', methods=['PUT'])

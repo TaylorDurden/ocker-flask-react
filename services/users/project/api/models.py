@@ -5,7 +5,7 @@ __date__ = '2019/3/17 3:52 AM'
 # services/users/project/api/models.py
 
 # from datetime import datetime
-import datetime
+import datetime, json
 from sqlalchemy.sql import func
 from werkzeug.security import generate_password_hash, check_password_hash
 from project import db
@@ -13,6 +13,7 @@ from project.config import BaseConfig
 import jwt
 from flask import url_for
 from hashlib import md5
+from project.utils.Role_Module_Permission import Module
 
 # from project.api.mixin import PaginatedAPIMixin
 
@@ -24,6 +25,15 @@ followers = db.Table('followers',
                                db.Integer,
                                db.ForeignKey('user.id'))
                      )
+
+user_roles = db.Table('user_roles',
+                      db.Column('user_id',
+                                db.Integer,
+                                db.ForeignKey('user.id')),
+                      db.Column('role_id',
+                                db.Integer,
+                                db.ForeignKey('role.id'))
+                      )
 
 
 class PaginatedAPIMixin(object):
@@ -60,6 +70,10 @@ class User(PaginatedAPIMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     phone = db.Column(db.String(120), index=True, unique=True)
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    roles = db.relationship(
+        'Role', secondary=user_roles,
+        primaryjoin=(user_roles.c.user_id == id),
+        backref=db.backref('roles', lazy='dynamic'), lazy='dynamic')
     avatar = db.Column(db.String())
     active = db.Column(db.Boolean(), default=True, nullable=False)
     followed = db.relationship(
@@ -67,6 +81,7 @@ class User(PaginatedAPIMixin, db.Model):
         primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
         backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+    is_admin = db.Column(db.Boolean(), default=False)
     created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
     last_edit_date = db.Column(db.DateTime, default=func.now(), nullable=False)
 
@@ -224,6 +239,7 @@ class Role(db.Model, PaginatedAPIMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(128), nullable=False)
     desc = db.Column(db.String(256))
+    # lazy="dynamic" 只可以用在一对多和多对多关系中，不可以用在一对一和多对一中。
     permissions = db.relationship('RolePermission', backref='role', lazy='dynamic')
 
     def to_dict(self, include_permissions=True):
@@ -233,8 +249,31 @@ class Role(db.Model, PaginatedAPIMixin):
             'desc': self.desc,
         }
         if include_permissions:
-            data['permissions'] = self.permissions
+            data['permissions'] = [
+                {
+                    'name': Module(x.name).name,
+                    'label': Module(x.name).name,
+                    'value': x.permissions.split(',')  # x.permissions是 <class 'str'>
+                }
+                # print("x: ", x.permissions, "--- x type: ", type(x.permissions))
+                for x in self.permissions
+            ]
+
         return data
+
+    @staticmethod
+    def new_role(command):
+        role = Role()
+        role.name = command['name']
+        role.desc = command['desc']
+        print(command['permissions'])
+        for key, value in command['permissions'].items():
+            print(key, value)
+            name = key
+            permissions = ",".join([json.dumps(x) for x in value])
+            print(name, permissions)
+            role.permissions.append(RolePermission(name=name, permissions=permissions))
+        return role
 
 
 class RolePermission(db.Model):
@@ -244,17 +283,6 @@ class RolePermission(db.Model):
     __tablename__ = 'role_permission'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(128), nullable=False)
+    name = db.Column(db.Integer, nullable=False)
     permissions = db.Column(db.String(256))
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
-
-
-class UserRole(db.Model):
-    """
-    User Role, many to many
-    """
-    __tablename__= 'user_role'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))

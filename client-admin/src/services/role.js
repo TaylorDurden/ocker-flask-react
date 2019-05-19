@@ -15,12 +15,11 @@ export async function getPermissionTemplate() {
   });
 }
 
-export async function newRole() {
+export async function newRole(params) {
   return request('/api/roles', {
     method: 'POST',
-    data: {
-      ...params,
-    },
+    data: params,
+    headers: GetAuthHeader()
   });
 }
 
@@ -30,6 +29,7 @@ export async function editRole() {
     data: {
       ...params,
     },
+    headers: GetAuthHeader()
   });
 }
 

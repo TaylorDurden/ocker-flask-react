@@ -105,7 +105,7 @@ class RoleList extends PureComponent {
       width: 100,
       render: (text, record) => (
         <Fragment>
-          <a onClick={() => this.handleUpdateModalVisible(true, record)}>编辑</a>
+          <a onClick={() => this.handleEditRole(record)}>编辑</a>
         </Fragment>
       ),
     },
@@ -235,10 +235,6 @@ class RoleList extends PureComponent {
     });
   };
 
-  handleEditRoleClick = (id) => {
-    router.push(`/setting-center/role-edit/${id}`);
-  };
-
   handleNewRoleClick = flag => {
     router.push(`/setting-center/role-create`);
   };
@@ -248,6 +244,11 @@ class RoleList extends PureComponent {
       updateModalVisible: !!flag,
       stepFormValues: record || {},
     });
+  };
+
+  handleEditRole = (record) => {
+    let id = record.id;
+    router.push(`/setting-center/role-edit/${id}`);
   };
 
   handleAdd = fields => {
