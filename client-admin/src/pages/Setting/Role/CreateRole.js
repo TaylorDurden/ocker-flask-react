@@ -127,7 +127,7 @@ class CreateRole extends PureComponent {
 
   onChange = (module, items, checkedList) => {
     const modulePermissions = {};
-    modulePermissions[[module]] = checkedList;
+    modulePermissions[module] = checkedList;
     const { selectedPermissions } = this.state;
     const newPermissions = {...selectedPermissions, ...modulePermissions};
     this.setState({
@@ -177,10 +177,6 @@ class CreateRole extends PureComponent {
       },
     };
     // const { selectedRows, modalVisible, updateModalVisible, stepFormValues } = this.state;
-
-    // const parentMethods = {
-    //   handleAdd: this.handleAdd,
-    // };
     const text = `
       A dog is a type of domesticated animal.
       Known for its loyalty and faithfulness,
@@ -256,7 +252,7 @@ class CreateRole extends PureComponent {
                 <Button type="primary" htmlType="submit" loading={loading}>
                   <FormattedMessage id="form.save" />
                 </Button>
-                <Button style={{ marginLeft: 8 }}>
+                <Button style={{ marginLeft: 8 }} onClick={this.handleBackClick}>
                   <FormattedMessage id="form.back" />
                 </Button>
               </FormItem>

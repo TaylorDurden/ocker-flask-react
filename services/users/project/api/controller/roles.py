@@ -37,7 +37,10 @@ def get_role_by(role_id):
         'message': '角色不存在'
     }
     try:
+        print("role_id: ", role_id)
+        print("role_id_type: ", type(role_id))
         role = Role.query.filter_by(id=int(role_id)).first()
+        print("role: ", role)
         if not role:
             return jsonify(response_object), 404
         else:
@@ -46,8 +49,8 @@ def get_role_by(role_id):
                 'data': role.to_dict()
             }
             return jsonify(response_object), 200
-    except ValueError:
-        return jsonify(response_object), 404
+    except Exception:
+        raise
 
 
 @roles_blueprint.route('/roles', methods=['POST'])
@@ -79,9 +82,30 @@ def new_role():
         return jsonify(response_object), 400
 
 
-@roles_blueprint.route('/roles', methods=['PUT'])
-def edit_role():
-    current_page = request.args.get('current_page', 1, type=int)
-    page_size = min(request.args.get('page_size', BaseConfig.LIST_PER_PAGE, type=int), 100)
-    roles = Role.to_paged_dict(Role.query, current_page, page_size)
-    return jsonify(roles), 200
+@roles_blueprint.route('/roles/<role_id>', methods=['PUT'])
+def edit_role(role_id):
+    post_data = request.get_json()
+    response_object = {
+        'status': 'fail',
+        'message': '角色不存在'
+    }
+    command = {
+        'name': post_data.get('name'),
+        'desc': post_data.get('desc'),
+        'permissions': post_data.get('permissions')
+    }
+    try:
+        role = Role.query.filter_by(id=int(role_id)).first()
+        print("role: ", role)
+        if not role:
+            return jsonify(response_object), 404
+        else:
+            response_object = {
+                'status': 'success',
+            }
+            role.edit(command)
+            db.session.commit()
+            return jsonify(response_object)
+    except Exception:
+        db.session.rollback()
+        raise

@@ -31,6 +31,9 @@ const errorHandler = error => {
   const { response = {} } = error;
   const errortext = codeMessage[response.status] || response.statusText;
   const { status, url } = response;
+  console.log('response: ', response)
+  console.log('url: ', url)
+  console.log('status: ', status)
 
   if (status === 401) {
     notification.error({

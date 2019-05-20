@@ -251,8 +251,8 @@ class Role(db.Model, PaginatedAPIMixin):
         if include_permissions:
             data['permissions'] = [
                 {
-                    'name': Module(x.name).name,
-                    'label': Module(x.name).name,
+                    'name': Module(int(x.name)).name,
+                    'label': Module(int(x.name)).name,
                     'value': x.permissions.split(',')  # x.permissions是 <class 'str'>
                 }
                 # print("x: ", x.permissions, "--- x type: ", type(x.permissions))
@@ -274,6 +274,15 @@ class Role(db.Model, PaginatedAPIMixin):
             print(name, permissions)
             role.permissions.append(RolePermission(name=name, permissions=permissions))
         return role
+
+    def edit(self, command):
+        self.name = command['name']
+        self.desc = command['desc']
+        [x.delete() for x in self.permissions]
+        for key, value in command['permissions'].items():
+            name = key
+            permissions = ",".join([json.dumps(x) for x in value])
+            self.permissions.append(RolePermission(name=name, permissions=permissions))
 
 
 class RolePermission(db.Model):

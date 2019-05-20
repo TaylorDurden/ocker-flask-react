@@ -33,3 +33,10 @@ export async function editRole() {
   });
 }
 
+export async function getRoleWithPermissions(params) {
+  return request('/api/roles/'+params.id, {
+    headers: GetAuthHeader()
+  });
+}
+
+

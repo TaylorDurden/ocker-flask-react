@@ -1,5 +1,5 @@
 import { queryRule, batchInactive, inactive, addRule, updateRule } from '@/services/api';
-import { query, getPermissionTemplate, newRole } from '@/services/role';
+import { query, getPermissionTemplate, newRole, getRoleWithPermissions } from '@/services/role';
 
 export default {
   namespace: 'roles',
@@ -9,6 +9,7 @@ export default {
       list: [],
       pagination: {},
     },
+    entity: {}
   },
 
   effects: {
@@ -42,6 +43,15 @@ export default {
       });
       if (callback) callback();
     },
+    *getrole({ payload, callback }, { call, put }) {
+      const response = yield call(getRoleWithPermissions, payload);
+      // type，effects与reducers里的定义不要重名
+      yield put({
+        type: 'get',
+        payload: response,
+      });
+      if (callback) callback();
+    },
   },
 
   reducers: {
@@ -49,6 +59,12 @@ export default {
       return {
         ...state,
         data: action.payload,
+      };
+    },
+    get(state, action) {
+      return {
+        ...state,
+        entity: action.payload.data,
       };
     },
   },
