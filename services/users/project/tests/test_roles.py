@@ -63,10 +63,10 @@ class TestRoleService(BaseTestCase):
             self.assertEqual('success', data['status'])
             print('roles_data: ', data)
             self.assertEqual(
-                [
-                    {'label': '用户管理', 'name': '用户管理', 'value': ['1', '2', '3']},
-                    {'label': '角色管理', 'name': '角色管理', 'value': ['0', '1', '4']}
-                ]
+                {
+                    101: [1, 2, 3],
+                    201: [0, 1, 4],
+                }
                 , data['data']['permissions'])
 
 

@@ -249,15 +249,13 @@ class Role(db.Model, PaginatedAPIMixin):
             'desc': self.desc,
         }
         if include_permissions:
-            data['permissions'] = [
-                {
-                    'name': Module(int(x.name)).name,
-                    'label': Module(int(x.name)).name,
-                    'value': x.permissions.split(',')  # x.permissions是 <class 'str'>
-                }
-                # print("x: ", x.permissions, "--- x type: ", type(x.permissions))
-                for x in self.permissions
-            ]
+            permissions = {}
+            for x in self.permissions:
+                str_vals = x.permissions.split(',')
+                permissions[int(x.name)] = [int(x) for x in str_vals]
+                #permissions[int(x.name)].key = int(x.name)
+
+            data['permissions'] = permissions
 
         return data
 

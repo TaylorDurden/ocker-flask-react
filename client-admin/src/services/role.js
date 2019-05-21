@@ -23,12 +23,10 @@ export async function newRole(params) {
   });
 }
 
-export async function editRole() {
+export async function editRole(params) {
   return request('/api/roles', {
     method: 'PUT',
-    data: {
-      ...params,
-    },
+    data: params,
     headers: GetAuthHeader()
   });
 }

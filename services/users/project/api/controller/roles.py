@@ -82,20 +82,21 @@ def new_role():
         return jsonify(response_object), 400
 
 
-@roles_blueprint.route('/roles/<role_id>', methods=['PUT'])
-def edit_role(role_id):
+@roles_blueprint.route('/roles', methods=['PUT'])
+def edit_role():
     post_data = request.get_json()
     response_object = {
         'status': 'fail',
         'message': '角色不存在'
     }
     command = {
+        'id': post_data.get('id'),
         'name': post_data.get('name'),
         'desc': post_data.get('desc'),
         'permissions': post_data.get('permissions')
     }
     try:
-        role = Role.query.filter_by(id=int(role_id)).first()
+        role = Role.query.filter_by(id=int(command['id'])).first()
         print("role: ", role)
         if not role:
             return jsonify(response_object), 404

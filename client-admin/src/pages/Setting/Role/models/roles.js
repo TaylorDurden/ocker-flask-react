@@ -1,5 +1,5 @@
 import { queryRule, batchInactive, inactive, addRule, updateRule } from '@/services/api';
-import { query, getPermissionTemplate, newRole, getRoleWithPermissions } from '@/services/role';
+import { query, getPermissionTemplate, newRole, getRoleWithPermissions, editRole } from '@/services/role';
 
 export default {
   namespace: 'roles',
@@ -9,7 +9,8 @@ export default {
       list: [],
       pagination: {},
     },
-    entity: {}
+    entity: {},
+    selectedPermissions: {},
   },
 
   effects: {
@@ -36,11 +37,11 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateRule, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
+      const response = yield call(editRole, payload);
+      // yield put({
+      //   type: 'save',
+      //   payload: response,
+      // });
       if (callback) callback();
     },
     *getrole({ payload, callback }, { call, put }) {
@@ -65,7 +66,14 @@ export default {
       return {
         ...state,
         entity: action.payload.data,
+        selectedPermissions: action.payload.data.permissions
       };
     },
+    changePermission(state, action) {
+      return {
+        ...state,
+        selectedPermissions: action.payload
+      };
+    }
   },
 };

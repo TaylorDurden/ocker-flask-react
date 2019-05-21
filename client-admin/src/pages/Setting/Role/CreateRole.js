@@ -48,7 +48,7 @@ class CreateRole extends PureComponent {
   state = {
     formValues: {},
     // permissions: {},
-    selectedPermissions: {},
+    //selectedPermissions: {},
     checkedList: defaultCheckedList,
     indeterminate: true,
     checkAll: false,
@@ -100,8 +100,7 @@ class CreateRole extends PureComponent {
   };
 
   handleSubmit = e => {
-    const { dispatch, form } = this.props;
-    const { selectedPermissions } = this.state;
+    const { dispatch, form, roles:{ selectedPermissions } } = this.props;
     e.preventDefault();
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -117,46 +116,68 @@ class CreateRole extends PureComponent {
         this.handleBackClick();
       }
     });
-
-
   };
 
   callback(key) {
     console.log(key);
   }
 
+  // onChange = (module, items, checkedList) => {
+  //   const modulePermissions = {};
+  //   modulePermissions[module] = checkedList;
+  //   const { selectedPermissions } = this.state;
+  //   const newPermissions = {...selectedPermissions, ...modulePermissions};
+  //   this.setState({
+  //     selectedPermissions: newPermissions,
+  //     // checkAll: checkedList.length === items.length,
+  //   });
+  // };
   onChange = (module, items, checkedList) => {
+    const { dispatch, roles: { selectedPermissions }, } = this.props;
     const modulePermissions = {};
     modulePermissions[module] = checkedList;
-    const { selectedPermissions } = this.state;
     const newPermissions = {...selectedPermissions, ...modulePermissions};
-    this.setState({
-      selectedPermissions: newPermissions,
-      // checkAll: checkedList.length === items.length,
+    dispatch({
+      type: 'roles/changePermission',
+      payload: newPermissions
     });
+    
   };
 
   onCheckAllChange = (module, items, e) => {
+    const { dispatch, roles: { selectedPermissions }, } = this.props;
     const allValues = items.map(item => item.value);
     const modulePermissions = {};
     modulePermissions[module] = e.target.checked ? allValues : [];
-    const { selectedPermissions, } = this.state;
     const newPermissions = {...selectedPermissions, ...modulePermissions};
-    this.setState({
-      selectedPermissions: newPermissions,
-      // selectedPermissions,
-      // checkAll: e.target.checked,
+    dispatch({
+      type: 'roles/changePermission',
+      payload: newPermissions
     });
   };
 
+  // onCheckAllChange = (module, items, e) => {
+  //   const allValues = items.map(item => item.value);
+  //   const modulePermissions = {};
+  //   modulePermissions[module] = e.target.checked ? allValues : [];
+  //   const { selectedPermissions, } = this.state;
+  //   const newPermissions = {...selectedPermissions, ...modulePermissions};
+  //   this.setState({
+  //     selectedPermissions: newPermissions,
+  //     // selectedPermissions,
+  //     // checkAll: e.target.checked,
+  //   });
+  // };
+
+
   render() {
     const {
-      roles: { data },
+      roles: { data, selectedPermissions },
       loading,
       form,
     } = this.props;
     console.log(data);
-    const { selectedPermissions } = this.state;
+    const {  } = this.state;
     const { getFieldDecorator } = form;
 
     const formItemLayout = {

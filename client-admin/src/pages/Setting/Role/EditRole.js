@@ -107,20 +107,20 @@ class EditRole extends PureComponent {
   };
 
   handleSubmit = e => {
-    const { dispatch, form } = this.props;
-    const { selectedPermissions } = this.state;
+    const { dispatch, form, roles:{ entity, selectedPermissions } } = this.props;
     e.preventDefault();
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         dispatch({
-          type: 'roles/add',
+          type: 'roles/update',
           payload: {
+            id: entity.id,
             name: values.name,
             desc: values.desc,
             permissions: selectedPermissions,
           },
         });
-        message.success('添加成功');
+        message.success('保存成功');
         this.handleBackClick();
       }
     });
@@ -131,42 +131,39 @@ class EditRole extends PureComponent {
   }
 
   onChange = (module, items, checkedList) => {
+    const { dispatch, roles: { selectedPermissions }, } = this.props;
     const modulePermissions = {};
     modulePermissions[module] = checkedList;
-    const { selectedPermissions } = this.state;
     const newPermissions = {...selectedPermissions, ...modulePermissions};
-    this.setState({
-      selectedPermissions: newPermissions,
-      // checkAll: checkedList.length === items.length,
+    dispatch({
+      type: 'roles/changePermission',
+      payload: newPermissions
     });
+    
   };
 
   onCheckAllChange = (module, items, e) => {
+    const { dispatch, roles: { selectedPermissions }, } = this.props;
     const allValues = items.map(item => item.value);
     const modulePermissions = {};
     modulePermissions[module] = e.target.checked ? allValues : [];
-    const { selectedPermissions, } = this.state;
     const newPermissions = {...selectedPermissions, ...modulePermissions};
-    this.setState({
-      selectedPermissions: newPermissions,
-      // selectedPermissions,
-      // checkAll: e.target.checked,
+    dispatch({
+      type: 'roles/changePermission',
+      payload: newPermissions
     });
   };
 
   render() {
     const {
-      roles: { data, entity },
+      roles: { data, entity, selectedPermissions },
       loading,
       form,
     } = this.props;
     
-    console.log('entity: ', entity);
-    //const { selectedPermissions } = this.state;
+    //console.log('entity: ', entity);
     const { getFieldDecorator } = form;
-    this.setState({
-      selectedPermissions: entity.permissions
-    });
+
     const formItemLayout = {
       labelCol: {
         xs: { span: 4 },
@@ -191,9 +188,8 @@ class EditRole extends PureComponent {
       it can be found as a welcome guest in many households across the world.
     `;
     const permissions_template = data.items || [];
-    console.log("permissions_template: ", permissions_template);
+    //console.log("permissions_template: ", permissions_template);
     // let {selectedPermissions} = entity;
-    const selectedPermissions = entity.permissions || [];
     return (
       <PageHeaderWrapper>
         <Card bordered={false}>
