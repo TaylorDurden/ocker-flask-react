@@ -253,7 +253,7 @@ class Role(db.Model, PaginatedAPIMixin):
             for x in self.permissions:
                 str_vals = x.permissions.split(',')
                 permissions[int(x.name)] = [int(x) for x in str_vals]
-                #permissions[int(x.name)].key = int(x.name)
+                # permissions[int(x.name)].key = int(x.name)
 
             data['permissions'] = permissions
 
@@ -274,9 +274,12 @@ class Role(db.Model, PaginatedAPIMixin):
         return role
 
     def edit(self, command):
+        role_id = command['id']
         self.name = command['name']
         self.desc = command['desc']
-        [x.delete() for x in self.permissions]
+        # print("self.permissions: "+self.permissions)
+        # [x.remove() for x in self.permissions]
+        self.permissions.filter(Role.id == int(role_id)).delete(synchronize_session=False)
         for key, value in command['permissions'].items():
             name = key
             permissions = ",".join([json.dumps(x) for x in value])

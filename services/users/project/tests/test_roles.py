@@ -64,11 +64,51 @@ class TestRoleService(BaseTestCase):
             print('roles_data: ', data)
             self.assertEqual(
                 {
-                    101: [1, 2, 3],
-                    201: [0, 1, 4],
+                    '101': [1, 2, 3],
+                    '201': [0, 1, 4],
                 }
                 , data['data']['permissions'])
 
+    def test_edit_role_with_permissions_by_id(self):
+        """0002_edit role with permissions is ok."""
+        command = {
+            'name': '角色name',
+            'desc': '角色desc',
+            'permissions': {
+                101: [1, 2, 3],
+                201: [0, 1, 4],
+            }
+        }
+        role = add_role(command);
+        print("role: ", role.id)
+        with self.client:
+            response = self.client.put(
+                f'/api/roles',
+                data=json.dumps({
+                    'id': '1',
+                    'name': '角色test',
+                    'desc': '角色desc123',
+                    'permissions': {
+                        101: [1, 2, 3],
+                    }
+                }),
+                content_type='application/json',
+            )
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual('success', data['status'])
+            response = self.client.get(f'/api/roles/{role.id}')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual('success', data['status'])
+            print('roles_data: ', data)
+            self.assertEqual('角色test', data['data']['name'])
+            self.assertEqual('角色desc123', data['data']['desc'])
+            self.assertEqual(
+                {
+                    '101': [1, 2, 3],
+                }
+                , data['data']['permissions'])
 
 if __name__ == '__main__':
     unittest.main()
