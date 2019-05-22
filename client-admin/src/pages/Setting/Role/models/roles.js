@@ -76,6 +76,7 @@ export default {
       };
     },
     changeFormValues(state, action) {
+      const { entity } = state;
       const newEntity = { ...entity, ...action.payload };
       return {
         ...state,
