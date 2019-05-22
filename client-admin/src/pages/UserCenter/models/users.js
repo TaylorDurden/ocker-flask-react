@@ -1,5 +1,5 @@
 import { queryRule, batchInactive, inactive, addRule, updateRule } from '@/services/api';
-import { query } from '@/services/user';
+import { query, addUser, editUser } from '@/services/user';
 
 export default {
   namespace: 'users',
@@ -9,6 +9,7 @@ export default {
       list: [],
       pagination: {},
     },
+    entity: {}
   },
 
   effects: {
@@ -20,11 +21,19 @@ export default {
       });
     },
     *add({ payload, callback }, { call, put }) {
-      const response = yield call(addRule, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
+      const response = yield call(addUser, payload);
+      // yield put({
+      //   type: 'save',
+      //   payload: response,
+      // });
+      if (callback) callback();
+    },
+    *edit({ payload, callback }, { call, put }) {
+      const response = yield call(editUser, payload);
+      // yield put({
+      //   type: 'save',
+      //   payload: response,
+      // });
       if (callback) callback();
     },
     *inactive({ payload, callback }, { call, put }) {
@@ -60,5 +69,19 @@ export default {
         data: action.payload,
       };
     },
+    changeFormValues(state, action) {
+      const { entity } = state;
+      const newEntity = { ...entity, ...action.payload };
+      return {
+        ...state,
+        entity: newEntity
+      };
+    },
+    changeRoles(state, action) {
+      return {
+        ...state,
+        entity: action.payload
+      };
+    }
   },
 };

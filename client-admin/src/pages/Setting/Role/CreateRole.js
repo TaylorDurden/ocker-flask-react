@@ -35,9 +35,6 @@ const FormItem = Form.Item;
 const Panel = Collapse.Panel;
 const CheckboxGroup = Checkbox.Group;
 
-const plainOptions = ['Apple', 'Pear', 'Orange'];
-const defaultCheckedList = ['Apple', 'Orange'];
-
 /* eslint react/no-multi-comp:0 */
 @connect(({ roles, loading }) => ({
   roles,
@@ -53,27 +50,6 @@ class CreateRole extends PureComponent {
     indeterminate: true,
     checkAll: false,
   };
-
-  columns = [
-    {
-      title: '角色名称',
-      dataIndex: 'name',
-    },
-    {
-      title: '角色描述',
-      dataIndex: 'desc',
-    },
-    {
-      title: '操作',
-      fixed: 'right',
-      width: 100,
-      render: (text, record) => (
-        <Fragment>
-          <a onClick={() => this.handleUpdateModalVisible(true, record)}>编辑</a>
-        </Fragment>
-      ),
-    },
-  ];
 
   componentDidMount() {
     const { dispatch } = this.props;
@@ -122,16 +98,6 @@ class CreateRole extends PureComponent {
     console.log(key);
   }
 
-  // onChange = (module, items, checkedList) => {
-  //   const modulePermissions = {};
-  //   modulePermissions[module] = checkedList;
-  //   const { selectedPermissions } = this.state;
-  //   const newPermissions = {...selectedPermissions, ...modulePermissions};
-  //   this.setState({
-  //     selectedPermissions: newPermissions,
-  //     // checkAll: checkedList.length === items.length,
-  //   });
-  // };
   onChange = (module, items, checkedList) => {
     const { dispatch, roles: { selectedPermissions }, } = this.props;
     const modulePermissions = {};
@@ -155,20 +121,6 @@ class CreateRole extends PureComponent {
       payload: newPermissions
     });
   };
-
-  // onCheckAllChange = (module, items, e) => {
-  //   const allValues = items.map(item => item.value);
-  //   const modulePermissions = {};
-  //   modulePermissions[module] = e.target.checked ? allValues : [];
-  //   const { selectedPermissions, } = this.state;
-  //   const newPermissions = {...selectedPermissions, ...modulePermissions};
-  //   this.setState({
-  //     selectedPermissions: newPermissions,
-  //     // selectedPermissions,
-  //     // checkAll: e.target.checked,
-  //   });
-  // };
-
 
   render() {
     const {

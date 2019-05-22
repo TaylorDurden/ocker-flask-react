@@ -35,78 +35,46 @@ const FormItem = Form.Item;
 const Panel = Collapse.Panel;
 const CheckboxGroup = Checkbox.Group;
 
-function mapPropsToFields(props) {
-  return {
-    name: Form.createFormField({
-      value: props.roles.entity.name
-    }),
-    desc: Form.createFormField({
-      value: props.roles.entity.desc
-    }),
-  }
-}
-
-function onValuesChange(props, changedValue, formValues) {
-  console.log('allValues:', formValues)
-   console.log('changedValue:', changedValue)
-   console.log('props:', props)
-   const { dispatch } = props;
-   dispatch({
-     type: 'roles/changeFormValues',
-     payload: formValues
-   });
-}
-
 /* eslint react/no-multi-comp:0 */
 @connect(({ roles, loading }) => ({
   roles,
   loading: loading.models.roles,
 }))
-@Form.create({
-  mapPropsToFields,
-  onValuesChange
-})
-class EditRole extends PureComponent {
+@Form.create()
+class CreateUser extends PureComponent {
   state = {
     formValues: {},
     // permissions: {},
+    //selectedPermissions: {},
     indeterminate: true,
     checkAll: false,
   };
 
   componentDidMount() {
-    const { dispatch, match } = this.props;
-
+    const { dispatch } = this.props;
     dispatch({
       type: 'roles/template',
-    });
-    dispatch({
-      type: 'roles/getrole',
-      payload: {
-        id: match.params.id
-      },
     });
   }
 
   handleBackClick = () => {
-    router.push(`/setting-center/role-index`);
+    router.push(`/setting-center/user-index`);
   };
 
   handleSubmit = e => {
-    const { dispatch, form, roles:{ entity, selectedPermissions } } = this.props;
+    const { dispatch, form, roles:{ selectedPermissions } } = this.props;
     e.preventDefault();
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         dispatch({
-          type: 'roles/update',
+          type: 'roles/add',
           payload: {
-            id: entity.id,
             name: values.name,
             desc: values.desc,
             permissions: selectedPermissions,
           },
         });
-        message.success('保存成功');
+        message.success('添加成功');
         this.handleBackClick();
       }
     });
@@ -116,6 +84,16 @@ class EditRole extends PureComponent {
     console.log(key);
   }
 
+  // onChange = (module, items, checkedList) => {
+  //   const modulePermissions = {};
+  //   modulePermissions[module] = checkedList;
+  //   const { selectedPermissions } = this.state;
+  //   const newPermissions = {...selectedPermissions, ...modulePermissions};
+  //   this.setState({
+  //     selectedPermissions: newPermissions,
+  //     // checkAll: checkedList.length === items.length,
+  //   });
+  // };
   onChange = (module, items, checkedList) => {
     const { dispatch, roles: { selectedPermissions }, } = this.props;
     const modulePermissions = {};
@@ -140,14 +118,28 @@ class EditRole extends PureComponent {
     });
   };
 
+  // onCheckAllChange = (module, items, e) => {
+  //   const allValues = items.map(item => item.value);
+  //   const modulePermissions = {};
+  //   modulePermissions[module] = e.target.checked ? allValues : [];
+  //   const { selectedPermissions, } = this.state;
+  //   const newPermissions = {...selectedPermissions, ...modulePermissions};
+  //   this.setState({
+  //     selectedPermissions: newPermissions,
+  //     // selectedPermissions,
+  //     // checkAll: e.target.checked,
+  //   });
+  // };
+
+
   render() {
     const {
-      roles: { data, entity, selectedPermissions },
+      roles: { data, selectedPermissions },
       loading,
       form,
     } = this.props;
-    
-    //console.log('entity: ', entity);
+    console.log(data);
+    const {  } = this.state;
     const { getFieldDecorator } = form;
 
     const formItemLayout = {
@@ -173,16 +165,14 @@ class EditRole extends PureComponent {
       Known for its loyalty and faithfulness,
       it can be found as a welcome guest in many households across the world.
     `;
-    const permissions_template = data.items || [];
-    //console.log("permissions_template: ", permissions_template);
-    // let {selectedPermissions} = entity;
+    const permissions = data.items || [];
     return (
       <PageHeaderWrapper>
         <Card bordered={false}>
           <Form {...formItemLayout} onSubmit={this.handleSubmit}>
             <Row>
-              <FormItem label="角色名称">
-                {getFieldDecorator('name', {
+              <FormItem label="用户名称">
+                {getFieldDecorator('username', {
                   rules: [
                     {
                       required: true,
@@ -193,51 +183,10 @@ class EditRole extends PureComponent {
               </FormItem>
             </Row>
             <Row>
-              <FormItem label="角色描述">
-                {getFieldDecorator('desc', {
+              <FormItem label="用户邮箱">
+                {getFieldDecorator('email', {
                   rules: [],
                 })(<Input />)}
-              </FormItem>
-            </Row>
-            <Row>
-              <FormItem label="角色权限">
-                {permissions_template.map((item, index) => (
-                  <Collapse onChange={this.callback} key={item.name}>
-                    <Panel header={item.name} key={item.name}>
-                      {item.module_permissions.map((item, i) => (
-                        <Row key={item.module}>
-                          <Col span={8}>
-                            <Checkbox
-                              //indeterminate={this.state.indeterminate}
-                              onChange={this.onCheckAllChange.bind(this, item.module, item.permissions)}
-
-                            >
-                              {item.module_name}
-                            </Checkbox>
-                          </Col>
-                          <Col span={16}>
-                            {/* {item.permissions &&
-                              item.permissions.map((checkbox, index) => (
-                                <Checkbox
-                                  key={index}
-                                  //indeterminate={this.state.indeterminate}
-                                  onChange={this.onChange}
-                                  // checked={!checkbox.disable}
-                                >
-                                  {checkbox.name}
-                                </Checkbox>
-                              ))} */}
-                            <CheckboxGroup
-                              options={item.permissions}
-                              value={selectedPermissions[item.module]}
-                              onChange={this.onChange.bind(this, item.module, item.permissions)}
-                            />
-                          </Col>
-                        </Row>
-                      ))}
-                    </Panel>
-                  </Collapse>
-                ))}
               </FormItem>
             </Row>
             <Row>
@@ -257,4 +206,4 @@ class EditRole extends PureComponent {
   }
 }
 
-export default EditRole;
+export default CreateUser;
