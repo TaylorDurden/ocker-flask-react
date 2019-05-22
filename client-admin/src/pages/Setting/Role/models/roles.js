@@ -74,6 +74,13 @@ export default {
         ...state,
         selectedPermissions: action.payload
       };
+    },
+    changeFormValues(state, action) {
+      const newEntity = { ...entity, ...action.payload };
+      return {
+        ...state,
+        entity: newEntity
+      };
     }
   },
 };

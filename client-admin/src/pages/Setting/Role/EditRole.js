@@ -49,13 +49,20 @@ function mapPropsToFields(props) {
   }
 }
 
+function onValuesChange(changedValues,props,allValues) {
+  console.log('allValues:',allValues)
+   console.log('changedValues:',changedValues)
+   console.log('props:',props)
+}
+
 /* eslint react/no-multi-comp:0 */
 @connect(({ roles, loading }) => ({
   roles,
   loading: loading.models.roles,
 }))
 @Form.create({
-  mapPropsToFields
+  mapPropsToFields,
+  onValuesChange
 })
 class EditRole extends PureComponent {
   state = {
