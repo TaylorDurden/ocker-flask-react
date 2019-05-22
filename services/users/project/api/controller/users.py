@@ -7,7 +7,7 @@ __date__ = '2019/3/17 3:52 AM'
 # services/users/project/api/users.py
 
 from flask import Blueprint, jsonify, request, render_template, json
-from project.api.models import User
+from project.api.models import User, Role
 from project import db
 from sqlalchemy import exc, and_, text, func
 from project.config import BaseConfig
@@ -37,11 +37,17 @@ def add_user():
 
     username = post_data.get('username')
     email = post_data.get('email')
-    role_id = post_data.get('role_id')
+    password = post_data.get('password')
+    role_ids = post_data.get('role_ids')
+    if role_ids and len(role_ids):
+        role_ids = [int(x) for x in role_ids.split(',')]
     try:
         user = User.query.filter_by(email=email).first()
         if not user:
-            db.session.add(User(username=username, email=email))
+            command = {'username': username, 'email': email, 'role_ids': role_ids}
+            new_user = User.add_user(command)
+            new_user.set_password(password)
+            db.session.add(new_user)
             db.session.commit()
             response_object['status'] = 'success'
             response_object['message'] = f'{email} was added!'
@@ -64,20 +70,24 @@ def edit_user():
     if not post_data:
         return jsonify(response_object), 400
 
+    user_id = post_data.get('id')
     username = post_data.get('username')
     email = post_data.get('email')
-    role_id = post_data.get('role_id')
+    role_ids = post_data.get('role_ids')
+    if role_ids and len(role_ids):
+        role_ids = [int(x) for x in role_ids.split(',')]
     try:
-        user = User.query.filter_by(email=email).first()
-        if not user:
-            db.session.add(User(username=username, email=email))
+        user = User.query.filter_by(id=int(user_id)).first()
+        if user:
+            command = {'id': int(user_id), 'username': username, 'email': email, 'role_ids': role_ids}
+            user.edit_user(command)
             db.session.commit()
             response_object['status'] = 'success'
             response_object['message'] = f'{email} was added!'
-            return jsonify(response_object), 201
+            return jsonify(response_object)
         else:
             response_object['message'] = 'Sorry. That email already exists.'
-            return jsonify(response_object), 400
+            return jsonify(response_object), 404
     except exc.IntegrityError:
         db.session.rollback()
         return jsonify(response_object), 400

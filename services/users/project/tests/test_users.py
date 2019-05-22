@@ -16,8 +16,9 @@ from project.api.models import User, Post
 from project import db
 
 
-def add_user(username, email):
-    user = User(username=username, email=email)
+def add_user(username, email, role_ids=[]):
+    command = {'username': username, 'email': email, 'role_ids': role_ids}
+    user = User.add_user(command)
     db.session.add(user)
     db.session.commit()
     return user
@@ -48,7 +49,8 @@ class TestUserService(BaseTestCase):
                 '/api/users',
                 data=json.dumps({
                     'username': 'michael',
-                    'email': 'michael@mherman.org'
+                    'email': 'michael@mherman.org',
+                    'password': "123456",
                 }),
                 content_type='application/json',
             )
@@ -77,8 +79,11 @@ class TestUserService(BaseTestCase):
         with self.client:
             response = self.client.post(
                 '/api/users',
-                data=json.dumps({'email': 'michael@mherman.org'}),
-                content_type='application/json'
+                data=json.dumps({
+                    'email': 'michael@mherman.org',
+                    'password': '123456',
+                }),
+                content_type='application/json',
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
@@ -92,7 +97,8 @@ class TestUserService(BaseTestCase):
                 '/api/users',
                 data=json.dumps({
                     'username': 'michael',
-                    'email': 'michael@mherman.org'
+                    'email': 'michael@mherman.org',
+                    'password': "123456",
                 }),
                 content_type='application/json',
             )
@@ -100,7 +106,9 @@ class TestUserService(BaseTestCase):
                 '/api/users',
                 data=json.dumps({
                     'username': 'michael',
-                    'email': 'michael@mherman.org'
+                    'email': 'michael@mherman.org',
+                    'password': "123456",
+                    'role_ids': [],
                 }),
                 content_type='application/json',
             )
@@ -141,8 +149,8 @@ class TestUserService(BaseTestCase):
 
     def test_all_users(self):
         """Ensure get all users behaves correctly."""
-        add_user('michael', 'michael@mherman.org')
-        add_user('fletcher', 'fletcher@notreal.com')
+        add_user('michael', 'michael@mherman.org', )
+        add_user('fletcher', 'fletcher@notreal.com', )
         with self.client:
             response = self.client.get('/api/users')
             data = json.loads(response.data.decode())

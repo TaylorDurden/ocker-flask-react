@@ -122,6 +122,22 @@ class User(PaginatedAPIMixin, db.Model):
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
+    def edit_user(self, command):
+        self.username = command['username']
+        # self.email = command['email']
+        if command['role_ids']:
+            self.roles.filter(User.id == int(command['id'])).delete(synchronize_session=False)
+            roles = Role.query.filter(Role.id.in_(command['role_ids'])).all()
+            self.roles.extend(roles)
+
+    @staticmethod
+    def add_user(command):
+        user = User(username=command['username'], email=command['email'])
+        if command['role_ids']:
+            roles = Role.query.filter(Role.id.in_(command['role_ids'])).all()
+            user.roles.extend(roles)
+        return user
+
     def to_json(self):
         return {
             'id': self.id,
@@ -251,8 +267,8 @@ class Role(db.Model, PaginatedAPIMixin):
         if include_permissions:
             permissions = {}
             for x in self.permissions:
-                str_vals = x.permissions.split(',')
-                permissions[int(x.name)] = [int(x) for x in str_vals]
+                values = x.permissions.split(',')
+                permissions[int(x.name)] = [int(x) for x in values]
                 # permissions[int(x.name)].key = int(x.name)
 
             data['permissions'] = permissions
