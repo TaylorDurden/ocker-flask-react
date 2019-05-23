@@ -295,7 +295,8 @@ class Role(db.Model, PaginatedAPIMixin):
         self.desc = command['desc']
         # print("self.permissions: "+self.permissions)
         # [x.remove() for x in self.permissions]
-        self.permissions.filter(Role.id == int(role_id)).delete(synchronize_session=False)
+        # self.permissions.filter(Role.id == int(role_id)).delete(synchronize_session=False)
+        self.permissions.clear()
         for key, value in command['permissions'].items():
             name = key
             permissions = ",".join([json.dumps(x) for x in value])

@@ -5,7 +5,7 @@ __date__ = '2019/4/15 10:04 PM'
 import unittest
 
 from project import db
-from project.api.models import User
+from project.api.models import User, Role
 from project.tests.base import BaseTestCase
 
 
@@ -13,6 +13,11 @@ def add_user(username, email):
     user = User(username=username, email=email)
     db.session.add(user)
     db.session.commit()
+    return user
+
+
+def add_user_with_roles(command):
+    user = User.add_user(command)
     return user
 
 
@@ -64,6 +69,25 @@ class TestUserModel(BaseTestCase):
         self.assertTrue(User.decode_auth_token(auth_token) == user.id)
         self.assertTrue(User.decode_auth_token(
             auth_token.decode("utf-8")) == 1)
+
+    def test_add_user_with_roles(self):
+        role = Role.new_role({'name': 'test_role', 'desc': 'test_role_desc', 'permissions': {}})
+        db.session.add(role)
+        db.session.commit()
+        command = {'username': 'a1', 'email': 'a1@163.com', 'role_ids': [role.id]}
+        user = add_user_with_roles(command)
+        db.session.add(user)
+        db.session.commit()
+
+    def test_edit_user_with_roles(self):
+        role = Role.new_role({'name': 'test_role', 'desc': 'test_role_desc', 'permissions': {}})
+        role1 = Role.new_role({'name': 'test_role1', 'desc': 'test_role_desc1', 'permissions': {}})
+        db.session.add(role)
+        db.session.commit()
+        command = {'username': 'a1', 'email': 'a1@163.com', 'role_ids': [role.id]}
+        user = add_user_with_roles(command)
+        db.session.add(user)
+        db.session.commit()
 
 
 if __name__ == '__main__':
