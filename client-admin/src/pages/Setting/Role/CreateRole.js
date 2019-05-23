@@ -44,9 +44,6 @@ const CheckboxGroup = Checkbox.Group;
 class CreateRole extends PureComponent {
   state = {
     formValues: {},
-    // permissions: {},
-    //selectedPermissions: {},
-    checkedList: defaultCheckedList,
     indeterminate: true,
     checkAll: false,
   };
@@ -101,20 +98,30 @@ class CreateRole extends PureComponent {
   onChange = (module, items, checkedList) => {
     const { dispatch, roles: { selectedPermissions }, } = this.props;
     const modulePermissions = {};
-    modulePermissions[module] = checkedList;
+    if(checkedList.length > 0){
+      modulePermissions[module] = checkedList;
+    }else{
+      delete selectedPermissions[module];
+    }
+
     const newPermissions = {...selectedPermissions, ...modulePermissions};
     dispatch({
       type: 'roles/changePermission',
       payload: newPermissions
     });
-    
+
   };
 
   onCheckAllChange = (module, items, e) => {
     const { dispatch, roles: { selectedPermissions }, } = this.props;
     const allValues = items.map(item => item.value);
     const modulePermissions = {};
-    modulePermissions[module] = e.target.checked ? allValues : [];
+    if(e.target.checked){
+      modulePermissions[module] = allValues;
+    }else{
+      delete selectedPermissions[module];
+    }
+    // modulePermissions[module] = e.target.checked ? allValues : [];
     const newPermissions = {...selectedPermissions, ...modulePermissions};
     dispatch({
       type: 'roles/changePermission',

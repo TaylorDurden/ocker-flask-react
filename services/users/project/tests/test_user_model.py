@@ -78,16 +78,47 @@ class TestUserModel(BaseTestCase):
         user = add_user_with_roles(command)
         db.session.add(user)
         db.session.commit()
+        self.assertEqual(len(user.roles.all()), 1)
+        self.assertEqual(user.roles[0].name, "test_role")
 
     def test_edit_user_with_roles(self):
         role = Role.new_role({'name': 'test_role', 'desc': 'test_role_desc', 'permissions': {}})
         role1 = Role.new_role({'name': 'test_role1', 'desc': 'test_role_desc1', 'permissions': {}})
         db.session.add(role)
+        db.session.add(role1)
         db.session.commit()
         command = {'username': 'a1', 'email': 'a1@163.com', 'role_ids': [role.id]}
         user = add_user_with_roles(command)
         db.session.add(user)
         db.session.commit()
+        print("user.roles1: ", user.roles.all())
+        self.assertEqual(len(user.roles.all()), 1)
+        command = {
+            'id': user.id,
+            'username': 'a12',
+            'email': 'a12@163.com',
+            'role_ids': [role.id, role1.id]
+        }
+        print("user.roles2 not edited: ", user.roles.all())
+        [print("user.roles2 not edited: ", x.name) for x in user.roles.all()]
+        user.edit_user(command)
+        print("user.roles2: ", user.roles.all())
+        [print("user.roles2 edited: ", x.name) for x in user.roles.all()]
+        db.session.commit()
+        self.assertEqual(len(user.roles.all()), 2)
+        command = {
+            'id': user.id,
+            'username': 'a12',
+            'email': 'a12@163.com',
+            'role_ids': [role1.id]
+        }
+        print("user.roles3 not edited: ", user.roles.all())
+        [print("user.roles3 not edited: ", x.name) for x in user.roles.all()]
+        user.edit_user(command)
+        print("user.roles3: ", user.roles.all())
+        [print("user.roles3 edited: ", x.name) for x in user.roles.all()]
+        db.session.commit()
+        self.assertEqual(len(user.roles.all()), 1)
 
 
 if __name__ == '__main__':

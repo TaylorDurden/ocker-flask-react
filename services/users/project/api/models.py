@@ -27,6 +27,10 @@ followers = db.Table('followers',
                      )
 
 user_roles = db.Table('user_roles',
+                      db.Column('id',
+                                db.Integer,
+                                primary_key=True,
+                                autoincrement=True),
                       db.Column('user_id',
                                 db.Integer,
                                 db.ForeignKey('user.id')),
@@ -126,9 +130,9 @@ class User(PaginatedAPIMixin, db.Model):
         self.username = command['username']
         # self.email = command['email']
         if command['role_ids']:
-            self.roles.filter(User.id == int(command['id'])).delete(synchronize_session=False)
+            # self.roles.filter(User.id == int(command['id'])).delete(synchronize_session=False)
             roles = Role.query.filter(Role.id.in_(command['role_ids'])).all()
-            self.roles.extend(roles)
+            self.roles = roles
 
     @staticmethod
     def add_user(command):
@@ -261,6 +265,7 @@ class Role(db.Model, PaginatedAPIMixin):
     def to_dict(self, include_permissions=True):
         data = {
             'id': self.id,
+            'key': self.id,
             'name': self.name,
             'desc': self.desc,
         }
@@ -282,6 +287,8 @@ class Role(db.Model, PaginatedAPIMixin):
         role.desc = command['desc']
         print(command['permissions'])
         for key, value in command['permissions'].items():
+            if not len(value):
+                continue
             print(key, value)
             name = key
             permissions = ",".join([json.dumps(x) for x in value])
@@ -295,12 +302,14 @@ class Role(db.Model, PaginatedAPIMixin):
         self.desc = command['desc']
         # print("self.permissions: "+self.permissions)
         # [x.remove() for x in self.permissions]
-        # self.permissions.filter(Role.id == int(role_id)).delete(synchronize_session=False)
-        self.permissions.clear()
+        self.permissions.filter(Role.id == int(role_id)).delete(synchronize_session=False)
+        # self.permissions.clear()
+        roles = []
         for key, value in command['permissions'].items():
             name = key
             permissions = ",".join([json.dumps(x) for x in value])
-            self.permissions.append(RolePermission(name=name, permissions=permissions))
+            roles.append(RolePermission(name=name, permissions=permissions))
+        self.permissions = roles
 
 
 class RolePermission(db.Model):

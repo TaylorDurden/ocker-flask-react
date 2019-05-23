@@ -70,6 +70,12 @@ export default {
       };
     },
     changePermission(state, action) {
+      // const checkdPermissions = action.payload;
+      // Object.keys(action.payload).forEach((item) => {
+      //   if(action.payload[item].length === 0) {
+      //     delete checkdPermissions.payload[item]
+      //   }
+      // })
       return {
         ...state,
         selectedPermissions: action.payload

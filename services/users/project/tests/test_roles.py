@@ -40,7 +40,7 @@ class TestRoleService(BaseTestCase):
             roles_response = self.client.get('/api/roles')
             roles = json.loads(roles_response.data.decode())
             print("roles: ", roles)
-            self.assertEqual(roles['list'], [{'id': 1, 'name': '角色test', 'desc': '角色desc'}])
+            self.assertEqual(roles['list'], [{'id': 1, 'key': 1, 'name': '角色test', 'desc': '角色desc'}])
             self.assertEqual(len(roles['list']), 1)
             self.assertEqual(roles['pagination']['current'], 1)
 

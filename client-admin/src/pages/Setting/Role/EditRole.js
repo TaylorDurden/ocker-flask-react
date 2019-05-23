@@ -119,20 +119,30 @@ class EditRole extends PureComponent {
   onChange = (module, items, checkedList) => {
     const { dispatch, roles: { selectedPermissions }, } = this.props;
     const modulePermissions = {};
-    modulePermissions[module] = checkedList;
+    if(checkedList.length > 0){
+      modulePermissions[module] = checkedList;
+    }else{
+      delete selectedPermissions[module];
+    }
+
     const newPermissions = {...selectedPermissions, ...modulePermissions};
     dispatch({
       type: 'roles/changePermission',
       payload: newPermissions
     });
-    
+
   };
 
   onCheckAllChange = (module, items, e) => {
     const { dispatch, roles: { selectedPermissions }, } = this.props;
     const allValues = items.map(item => item.value);
     const modulePermissions = {};
-    modulePermissions[module] = e.target.checked ? allValues : [];
+    if(e.target.checked){
+      modulePermissions[module] = allValues;
+    }else{
+      delete selectedPermissions[module];
+    }
+    // modulePermissions[module] = e.target.checked ? allValues : [];
     const newPermissions = {...selectedPermissions, ...modulePermissions};
     dispatch({
       type: 'roles/changePermission',
@@ -146,7 +156,7 @@ class EditRole extends PureComponent {
       loading,
       form,
     } = this.props;
-    
+
     //console.log('entity: ', entity);
     const { getFieldDecorator } = form;
 
