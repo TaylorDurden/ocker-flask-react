@@ -15,9 +15,9 @@ WORKDIR /usr/src/app
 COPY ./requirements.txt /usr/src/app/requirements.txt
 RUN pip install -r requirements.txt -i https://pypi.doubanio.com/simple
 
-# add entrypoint.sh
+# add entrypoint-prod.sh
 COPY ./entrypoint-prod.sh /usr/src/app/entrypoint-prod.sh
-RUN chmod +x /usr/src/app/entrypoint-prod.sh
+RUN chmod 777 /usr/src/app/entrypoint-prod.sh
 
 # add app
 COPY . /usr/src/app
