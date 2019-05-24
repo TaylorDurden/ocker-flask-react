@@ -33,7 +33,7 @@ services:
       - 8001:8000
     environment:
       - NODE_ENV=production
-      - REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
+      #- REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
       - CHOKIDAR_USEPOLLING=true # enable hot reloading
     depends_on:
       - users
