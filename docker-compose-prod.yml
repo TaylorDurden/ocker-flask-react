@@ -5,37 +5,61 @@ services:
   users:
     build:
       context: ./services/users
-      dockerfile: Dockerfile-prod
-    expose:
-      - '5000'
+      dockerfile: Dockerfile-dev
+    volumes:
+      - ./services/users:/usr/src/app
+    ports:
+      - 5000
     environment:
       - FLASK_APP=project/__init__.py
-      - FLASK_ENV=production
-      - APP_SETTINGS=project.config.ProductionConfig
+      - FLASK_ENV=development
+      - APP_SETTINGS=project.config.DevelopmentConfig
       - DATABASE_URL=postgres://postgres:postgres@users-db:5432/users_dev
       - DATABASE_TEST_URL=postgres://postgres:postgres@users-db:5432/users_test
     depends_on:
       - users-db
 
-  client:
-    container_name: client
+  client-admin:
     build:
-      context: ./services/client
-      dockerfile: Dockerfile-prod
-      args:
-        - NODE_ENV=production
-        - REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
+      context: ./client-admin
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./client-admin:/usr/src/app
+      - ./client-admin/src:/usr/src/app/src
+      - ./client-admin/config:/usr/src/app/config
+      - ./client-admin/mock:/usr/src/app/mock
+      - /usr/src/app/node_modules
     ports:
-      - '3007:80'
+      - 8001:8000
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
+      - CHOKIDAR_USEPOLLING=true # enable hot reloading
     depends_on:
       - users
+
+  # client:
+  #   build:
+  #     context: ./services/client
+  #     dockerfile: Dockerfile-dev
+  #   volumes:
+  #     - './services/client:/usr/src/app'
+  #     - '/usr/src/app/node_modules'
+  #   ports:
+  #     - 3007:3000
+  #   environment:
+  #     - NODE_ENV=development
+  #     - REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
+  #     - CHOKIDAR_USEPOLLING=true # enable hot reloading
+  #   depends_on:
+  #     - users
 
   users-db:
     build:
       context: ./services/users/project/db
       dockerfile: Dockerfile
-    expose:
-      - 5432
+    ports:
+      - 5435:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -43,10 +67,11 @@ services:
   nginx:
     build:
       context: ./services/nginx
-      dockerfile: Dockerfile-prod
+      dockerfile: Dockerfile-dev
     restart: always
     ports:
       - 80:80
     depends_on:
       - users
-      - client
+      #- client-admin
+      #- client
