@@ -22,7 +22,7 @@ services:
   client-admin:
     build:
       context: ./client-admin
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile-prod
     volumes:
       - ./client-admin:/usr/src/app
       - ./client-admin/src:/usr/src/app/src
