@@ -28,8 +28,9 @@ services:
       - ./client-admin/src:/usr/src/app/src
       - ./client-admin/config:/usr/src/app/config
       - ./client-admin/mock:/usr/src/app/mock
+      - ./client-admin/dist:/usr/src/app/dist
       - /usr/src/app/node_modules
-      - dist:/usr/share/nginx/html:ro
+      #- dist:/usr/share/nginx/html:ro
     ports:
       - 8001:8000
     environment:
