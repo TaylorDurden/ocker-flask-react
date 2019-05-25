@@ -1,7 +1,6 @@
 # base image
 FROM python:3.7.2-alpine
 
-USER root
 
 # install dependencies
 RUN apk update && \
