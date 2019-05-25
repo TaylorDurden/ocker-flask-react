@@ -64,7 +64,7 @@ services:
       - 5435:5432
     environment:
       - POSTGRES_USER=postgres
-      #- POSTGRES_PASSWORD=2v#fli0RmdbCNlZ1
+      - POSTGRES_PASSWORD=2v#fli0RmdbCNlZ1
       #- POSTGRES_PASSWORD=postgres
 
   nginx:
