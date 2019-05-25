@@ -19,7 +19,7 @@ RUN pip install -r requirements.txt -i https://pypi.doubanio.com/simple
 # new
 # add entrypoint.sh
 COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
-RUN chmod +x /usr/src/app/entrypoint.sh
+RUN sudo chmod +x /usr/src/app/entrypoint.sh
 
 # add app
 COPY . /usr/src/app
