@@ -14,8 +14,8 @@ services:
       - FLASK_APP=project/__init__.py
       - FLASK_ENV=production
       - APP_SETTINGS=project.config.ProductionConfig
-      - DATABASE_URL=postgres://postgres:postgres@users-db:5432/users_prod
-      - DATABASE_TEST_URL=postgres://postgres:postgres@users-db:5432/users_test
+      - DATABASE_URL=postgres://postgres:2v#fli0RmdbCNlZ1@users-db:5432/users_prod
+      - DATABASE_TEST_URL=postgres://postgres:2v#fli0RmdbCNlZ1@users-db:5432/users_test
     depends_on:
       - users-db
 
@@ -65,7 +65,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       #- POSTGRES_PASSWORD=2v#fli0RmdbCNlZ1
-      - POSTGRES_PASSWORD=postgres
+      #- POSTGRES_PASSWORD=postgres
 
   nginx:
     build:
