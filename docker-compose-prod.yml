@@ -79,5 +79,5 @@ services:
       - client-admin
       #- client
 
-  volumes:
-    dist:
+volumes:
+  dist:
