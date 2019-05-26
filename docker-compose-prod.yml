@@ -29,7 +29,7 @@ services:
       - ./client-admin/config:/usr/src/app/config
       - /usr/src/app/node_modules
     ports:
-      - 8001:80
+      - '8001:80'
     environment:
       - NODE_ENV=production
       #- REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
@@ -45,7 +45,7 @@ services:
   #     - './services/client:/usr/src/app'
   #     - '/usr/src/app/node_modules'
   #   ports:
-  #     - 3007:3000
+  #     - 3007:80
   #   environment:
   #     - NODE_ENV=production
   #     - REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
@@ -58,7 +58,7 @@ services:
       context: ./services/users/project/db
       dockerfile: Dockerfile
     ports:
-      - 5435:5432
+      - '5435:5432'
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=2v#fli0RmdbCNlZ1
@@ -70,7 +70,7 @@ services:
       dockerfile: Dockerfile-prod
     restart: always
     ports:
-      - 80:80
+      - '80:80'
     depends_on:
       - users
       - client-admin
