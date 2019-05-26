@@ -32,7 +32,7 @@ services:
       - /usr/src/app/node_modules
       - dist:/usr/share/nginx/html:ro
     ports:
-      - 80:80
+      - 8001:80
     environment:
       - NODE_ENV=production
       #- REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
