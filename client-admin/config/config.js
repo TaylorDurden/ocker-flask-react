@@ -64,7 +64,7 @@ export default {
   plugins,
   base: '/usr/share/nginx/html',
   publicPath: '/usr/share/nginx/html/static',
-  exportStatic: true,
+  exportStatic: {},
   // history: 'hash',
   // exportStatic: true,
   define: {
