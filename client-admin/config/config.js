@@ -63,7 +63,7 @@ export default {
   // add for transfer to umi
   plugins,
   base: '/usr/share/nginx/html',
-  publicPath: '/usr/share/nginx/html/static',
+  // publicPath: '/usr/share/nginx/html/static',
   // exportStatic: {},
   history: 'hash',
   // exportStatic: true,
