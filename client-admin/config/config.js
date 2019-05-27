@@ -64,8 +64,8 @@ export default {
   plugins,
   base: '/usr/share/nginx/html',
   publicPath: '/usr/share/nginx/html/static',
-  exportStatic: {},
-  // history: 'hash',
+  // exportStatic: {},
+  history: 'hash',
   // exportStatic: true,
   define: {
     ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
