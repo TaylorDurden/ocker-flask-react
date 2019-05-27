@@ -62,7 +62,7 @@ if (ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site') {
 export default {
   // add for transfer to umi
   plugins,
-  base: '/client-admin',
+  // base: '/client-admin',
   history: 'hash',
   exportStatic: true,
   define: {
