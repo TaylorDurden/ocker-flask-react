@@ -21,7 +21,6 @@ ENV NODE_ENV $NODE_ENV
 # create build
 COPY . /usr/src/app
 RUN npm run build
-COPY . /usr/src/app
 
 #########
 # FINAL #
