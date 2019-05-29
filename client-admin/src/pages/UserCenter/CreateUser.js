@@ -171,12 +171,12 @@ class CreateUser extends PureComponent {
         <Card bordered={false}>
           <Form {...formItemLayout} onSubmit={this.handleSubmit}>
             <Row>
-              <FormItem label="用户名称">
+              <FormItem label="用户名">
                 {getFieldDecorator('username', {
                   rules: [
                     {
                       required: true,
-                      message: '请填写角色名称!',
+                      message: '请填写用户名!',
                     },
                   ],
                 })(<Input />)}
