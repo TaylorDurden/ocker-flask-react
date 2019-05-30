@@ -1,5 +1,6 @@
 import { queryRule, batchInactive, inactive, addRule, updateRule } from '@/services/api';
 import { query, addUser, editUser } from '@/services/user';
+import { getRoleSelectList } from '@/services/role';
 
 export default {
   namespace: 'users',
@@ -9,7 +10,9 @@ export default {
       list: [],
       pagination: {},
     },
-    entity: {}
+    entity: {},
+    roleSelectList: [],
+    role_ids: [],
   },
 
   effects: {
@@ -53,13 +56,17 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateRule, payload);
+      const response = yield call(editUser, payload);
+      if (callback) callback();
+    },
+    *getRoleSelectList({ payload, callback }, { call, put }) {
+      const response = yield call(getRoleSelectList);
       yield put({
-        type: 'save',
+        type: 'initRoleSelect',
         payload: response,
       });
       if (callback) callback();
-    },
+    }
   },
 
   reducers: {
@@ -82,6 +89,18 @@ export default {
         ...state,
         entity: action.payload
       };
-    }
+    },
+    initRoleSelect(state, action) {
+      return {
+        ...state,
+        roleSelectList: action.payload
+      };
+    },
+    setRoleIds(state, action) {
+      return {
+        ...state,
+        role_ids: action.payload
+      };
+    },
   },
 };

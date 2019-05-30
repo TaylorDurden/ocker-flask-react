@@ -144,7 +144,7 @@ class TableList extends PureComponent {
       title: '操作',
       render: (text, record) => (
         <Fragment>
-          <a onClick={() => this.handleUpdateModalVisible(true, record)}>配置</a>
+          <a onClick={() => this.handleEditUser(record)}>编辑</a>
           <Divider type="vertical" />
           <a href="">订阅警报</a>
         </Fragment>
@@ -276,11 +276,8 @@ class TableList extends PureComponent {
     });
   };
 
-  handleUpdateModalVisible = (flag, record) => {
-    this.setState({
-      updateModalVisible: !!flag,
-      stepFormValues: record || {},
-    });
+  handleEditUser = (record) => {
+    router.push(`/user-center/edit-user/${record.id}`);
   };
 
   handleAdd = fields => {
@@ -322,6 +319,10 @@ class TableList extends PureComponent {
       endDate:undefined,  //结束时间
     })
   }
+
+  handleNewUserClicked = () => {
+    router.push('/user-center/create-user');
+  };
 
   //时间改变的方法
   onPickerChange=(date, dateString)=>{
@@ -461,7 +462,7 @@ class TableList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
+              <Button icon="plus" type="primary" onClick={() => this.handleNewUserClicked()}>
                 新建
               </Button>
               {selectedRows.length > 0 && (

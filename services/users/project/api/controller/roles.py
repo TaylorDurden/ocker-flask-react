@@ -29,6 +29,13 @@ def role_page_list():
     return jsonify(roles)
 
 
+@roles_blueprint.route('/roles-select', methods=['GET'])
+def role_select_list():
+    roles = Role.query.all()
+    res = [x.to_dict(include_permissions=False) for x in roles]
+    return jsonify(res)
+
+
 @roles_blueprint.route('/roles/<role_id>', methods=['GET'])
 def get_role_by(role_id):
     """Get single user details"""

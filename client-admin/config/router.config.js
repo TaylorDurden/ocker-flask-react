@@ -71,6 +71,18 @@ export default [
             name: 'user-list',
             component: './UserCenter/UserList',
           },
+          {
+            hideInMenu: true,
+            path: '/user-center/create-user',
+            name: 'create-user',
+            component: './UserCenter/CreateUser',
+          },
+          {
+            hideInMenu: true,
+            path: '/user-center/edit-user/:id',
+            name: 'edit-user',
+            component: './UserCenter/EditUser',
+          },
         ],
       },
       // 系统设置

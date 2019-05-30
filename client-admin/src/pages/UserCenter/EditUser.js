@@ -69,7 +69,7 @@ const passwordProgressMap = {
   loading: loading.models.users,
 }))
 @Form.create()
-class CreateUser extends PureComponent {
+class EditUser extends PureComponent {
   state = {
     confirmDirty: false,
     visible: false,
@@ -109,7 +109,7 @@ class CreateUser extends PureComponent {
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         dispatch({
-          type: 'users/add',
+          type: 'users/update',
           payload: {
             username: values.username,
             email: values.email,
@@ -130,73 +130,6 @@ class CreateUser extends PureComponent {
       type: 'users/setRoleIds',
       payload: value,
     });
-  };
-
-  checkConfirm = (rule, value, callback) => {
-    const { form } = this.props;
-    if (value && value !== form.getFieldValue('password')) {
-      callback(formatMessage({ id: 'validation.password.twice' }));
-    } else {
-      callback();
-    }
-  };
-
-  checkPassword = (rule, value, callback) => {
-    const { visible, confirmDirty } = this.state;
-    if (!value) {
-      this.setState({
-        help: formatMessage({ id: 'validation.password.required' }),
-        visible: !!value,
-      });
-      callback('error');
-    } else {
-      this.setState({
-        help: '',
-      });
-      if (!visible) {
-        this.setState({
-          visible: !!value,
-        });
-      }
-      if (value.length < 6) {
-        callback('error');
-      } else {
-        const { form } = this.props;
-        if (value && confirmDirty) {
-          form.validateFields(['confirm'], { force: true });
-        }
-        callback();
-      }
-    }
-  };
-
-  getPasswordStatus = () => {
-    const { form } = this.props;
-    const value = form.getFieldValue('password');
-    if (value && value.length > 9) {
-      return 'ok';
-    }
-    if (value && value.length > 5) {
-      return 'pass';
-    }
-    return 'poor';
-  };
-
-  renderPasswordProgress = () => {
-    const { form } = this.props;
-    const value = form.getFieldValue('password');
-    const passwordStatus = this.getPasswordStatus();
-    return value && value.length ? (
-      <div className={styles[`progress-${passwordStatus}`]}>
-        <Progress
-          status={passwordProgressMap[passwordStatus]}
-          className={styles.progress}
-          strokeWidth={6}
-          percent={value.length * 10 > 100 ? 100 : value.length * 10}
-          showInfo={false}
-        />
-      </div>
-    ) : null;
   };
 
   callback(key) {
@@ -248,7 +181,7 @@ class CreateUser extends PureComponent {
                       message: '请填写用户名!',
                     },
                   ],
-                })(<Input placeholder="请输入用户名" />)}
+                })(<Input disabled placeholder="请输入用户名" />)}
               </FormItem>
             </Row>
             <Row>
@@ -264,53 +197,7 @@ class CreateUser extends PureComponent {
                       message: formatMessage({ id: 'validation.email.wrong-format' }),
                     },
                   ],
-                })(<Input placeholder="请输入邮箱" />)}
-              </FormItem>
-            </Row>
-            <Row>
-              <FormItem label="密码">
-                <Popover
-                  getPopupContainer={node => node.parentNode}
-                  content={
-                    <div style={{ padding: '4px 0' }}>
-                      {passwordStatusMap[this.getPasswordStatus()]}
-                      {this.renderPasswordProgress()}
-                      <div style={{ marginTop: 10 }}>
-                        <FormattedMessage id="validation.password.strength.msg" />
-                      </div>
-                    </div>
-                  }
-                  overlayStyle={{ width: 240 }}
-                  placement="right"
-                  visible={visible}
-                >
-                  {getFieldDecorator('password', {
-                    rules: [
-                      {
-                        required: true,
-                        message: "请输入密码！",
-                      },
-                      {
-                        validator: this.checkPassword,
-                      },
-                    ],
-                  })(<Input type="password" placeholder="请输入密码" />)}
-                </Popover>
-              </FormItem>
-            </Row>
-            <Row>
-              <FormItem label="确认密码">
-                {getFieldDecorator('confirm', {
-                  rules: [
-                    {
-                      required: true,
-                      message: formatMessage({ id: 'validation.confirm-password.required' }),
-                    },
-                    {
-                      validator: this.checkConfirm,
-                    },
-                  ],
-                })(<Input type="password" placeholder={formatMessage({ id: 'form.confirm-password.placeholder' })} />)}
+                })(<Input disabled placeholder="请输入邮箱" />)}
               </FormItem>
             </Row>
             <Row>
@@ -353,4 +240,4 @@ class CreateUser extends PureComponent {
   }
 }
 
-export default CreateUser;
+export default EditUser;

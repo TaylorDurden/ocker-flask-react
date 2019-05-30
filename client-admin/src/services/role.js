@@ -37,4 +37,9 @@ export async function getRoleWithPermissions(params) {
   });
 }
 
+export async function getRoleSelectList() {
+  return request('/api/roles-select', {
+    headers: GetAuthHeader()
+  });
+}
 

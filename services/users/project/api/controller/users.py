@@ -39,8 +39,8 @@ def add_user():
     email = post_data.get('email')
     password = post_data.get('password')
     role_ids = post_data.get('role_ids')
-    if role_ids and len(role_ids):
-        role_ids = [int(x) for x in role_ids.split(',')]
+    # if role_ids and len(role_ids):
+    #     role_ids = [int(x) for x in role_ids.split(',')]
     try:
         user = User.query.filter_by(email=email).first()
         if not user:
@@ -74,8 +74,8 @@ def edit_user():
     username = post_data.get('username')
     email = post_data.get('email')
     role_ids = post_data.get('role_ids')
-    if role_ids and len(role_ids):
-        role_ids = [int(x) for x in role_ids.split(',')]
+    # if role_ids and len(role_ids):
+    #     role_ids = [int(x) for x in role_ids.split(',')]
     try:
         user = User.query.filter_by(id=int(user_id)).first()
         if user:
