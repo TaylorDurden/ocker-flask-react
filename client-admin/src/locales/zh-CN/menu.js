@@ -47,6 +47,7 @@ export default {
   'menu.user-center': '用户中心',
   'menu.user-center.user-list': '用户列表',
   'menu.user-center.create-user': '新建用户',
+  'menu.user-center.edit-user': '编辑用户',
   'menu.setting-center': '系统管理',
   'menu.setting-center.role-index': '角色管理',
   'menu.setting-center.role-create': '新建角色',

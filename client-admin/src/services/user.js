@@ -25,6 +25,20 @@ export async function editUser(params) {
   });
 }
 
+export async function getUserById(params) {
+  return request('/api/users/'+params.id, {
+    headers: GetAuthHeader()
+  });
+}
+
+export async function setActive(params) {
+  return request('/api/users/set-active', {
+    method: 'POST',
+    data: params,
+    headers: GetAuthHeader()
+  });
+}
+
 
 export async function queryCurrent() {
   return request('/api/auth/status', {

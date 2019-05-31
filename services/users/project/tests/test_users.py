@@ -51,6 +51,7 @@ class TestUserService(BaseTestCase):
                     'username': 'michael',
                     'email': 'michael@mherman.org',
                     'password': "123456",
+                    'role_ids': []
                 }),
                 content_type='application/json',
             )
@@ -99,6 +100,7 @@ class TestUserService(BaseTestCase):
                     'username': 'michael',
                     'email': 'michael@mherman.org',
                     'password': "123456",
+                    'role_ids': [2, 1, 3]
                 }),
                 content_type='application/json',
             )

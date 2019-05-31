@@ -1,7 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import mt from 'moment-timezone'
+import mt from 'moment-timezone';
 import 'moment/locale/zh-cn';
 import router from 'umi/router';
 import {
@@ -23,6 +23,7 @@ import {
   Divider,
   Steps,
   Radio,
+  Popconfirm,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
@@ -104,9 +105,7 @@ class TableList extends PureComponent {
       title: '上次访问',
       dataIndex: 'last_edit_date',
       sorter: true,
-      render: (text) =>
-        mt(text).format('YYYY-MM-DD HH:mm:ss')
-      ,
+      render: text => mt(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '文章',
@@ -128,16 +127,16 @@ class TableList extends PureComponent {
       dataIndex: 'active',
       filters: [
         {
-          text: "禁用",
+          text: '禁用',
           value: 0,
         },
         {
-          text: "启用",
+          text: '启用',
           value: 1,
         },
       ],
       render(val) {
-        return <Badge status={statusMap[val?1:0]} text={val?"启用":"禁用"} />;
+        return <Badge status={statusMap[val ? 1 : 0]} text={val ? '启用' : '禁用'} />;
       },
     },
     {
@@ -146,7 +145,14 @@ class TableList extends PureComponent {
         <Fragment>
           <a onClick={() => this.handleEditUser(record)}>编辑</a>
           <Divider type="vertical" />
-          <a href="">订阅警报</a>
+          <Popconfirm
+            title="确认执行此操作?"
+            onConfirm={() => this.handleSetActive(record)}
+            okText="是"
+            cancelText="否"
+          >
+            <a>{record.active ? '禁用' : '启用'}</a>
+          </Popconfirm>
         </Fragment>
       ),
     },
@@ -209,28 +215,16 @@ class TableList extends PureComponent {
     });
   };
 
-  handleMenuClick = e => {
+  handleSetActive = record => {
     const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-
-    if (selectedRows.length === 0) return;
-    switch (e.key) {
-      case 'batch-inactive':
-        dispatch({
-          type: 'users/batchInactive',
-          payload: {
-            key: selectedRows.map(row => row.key),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-        break;
-      default:
-        break;
-    }
+    dispatch({
+      type: 'users/setActive',
+      payload: {
+        id: record.id,
+        active: !record.active,
+      },
+    });
+    this.handleSearch();
   };
 
   handleSelectRows = rows => {
@@ -240,7 +234,7 @@ class TableList extends PureComponent {
   };
 
   handleSearch = e => {
-    e.preventDefault();
+    e&&e.preventDefault();
 
     const { dispatch, form } = this.props;
 
@@ -255,17 +249,21 @@ class TableList extends PureComponent {
       this.setState({
         formValues: values,
       });
-      const vals = {...values};
+      const vals = { ...values };
       const last_edit_date = [];
-      if(values.last_edit_date && values.last_edit_date.length > 0) {
-        const start = values.last_edit_date[0]
-        const end = values.last_edit_date[1]
-        last_edit_date[0] = moment(start).utc().toISOString();
-        last_edit_date[1] = moment(end).utc().toISOString();
+      if (values.last_edit_date && values.last_edit_date.length > 0) {
+        const start = values.last_edit_date[0];
+        const end = values.last_edit_date[1];
+        last_edit_date[0] = moment(start)
+          .utc()
+          .toISOString();
+        last_edit_date[1] = moment(end)
+          .utc()
+          .toISOString();
       }
       dispatch({
         type: 'users/fetch',
-        payload: {...vals, last_edit_date},
+        payload: { ...vals, last_edit_date },
       });
     });
   };
@@ -276,7 +274,7 @@ class TableList extends PureComponent {
     });
   };
 
-  handleEditUser = (record) => {
+  handleEditUser = record => {
     router.push(`/user-center/edit-user/${record.id}`);
   };
 
@@ -313,27 +311,27 @@ class TableList extends PureComponent {
   };
 
   //切换tab的时候的回调函数
-  tabChange=(activeKey)=>{
+  tabChange = activeKey => {
     this.setState({
-      startDate:undefined,//开始时间
-      endDate:undefined,  //结束时间
-    })
-  }
+      startDate: undefined, //开始时间
+      endDate: undefined, //结束时间
+    });
+  };
 
   handleNewUserClicked = () => {
     router.push('/user-center/create-user');
   };
 
   //时间改变的方法
-  onPickerChange=(date, dateString)=>{
-    console.log("data",date,"dateString",dateString);
+  onPickerChange = (date, dateString) => {
+    console.log('data', date, 'dateString', dateString);
     //这两个参数值antd自带的参数
-    console.log("dateString",dateString[0],"dateString",dateString[1]);
+    console.log('dateString', dateString[0], 'dateString', dateString[1]);
     this.setState({
-      startDate:dateString[0],
-      endDate:dateString[1],
-    })
-  }
+      startDate: dateString[0],
+      endDate: dateString[1],
+    });
+  };
 
   renderSimpleForm() {
     const {
@@ -407,9 +405,7 @@ class TableList extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={16} sm={24}>
             <FormItem label="上次访问日期">
-              {getFieldDecorator('last_edit_date')(
-                <RangePicker
-                  showTime />)}
+              {getFieldDecorator('last_edit_date')(<RangePicker showTime />)}
             </FormItem>
           </Col>
         </Row>

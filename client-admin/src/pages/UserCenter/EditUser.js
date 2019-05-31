@@ -63,12 +63,25 @@ const passwordProgressMap = {
   poor: 'exception',
 };
 
+function mapPropsToFields(props) {
+  return {
+    username: Form.createFormField({
+      value: props.users.entity.username,
+    }),
+    email: Form.createFormField({
+      value: props.users.entity.email,
+    }),
+  };
+}
+
 /* eslint react/no-multi-comp:0 */
 @connect(({ users, loading }) => ({
   users,
   loading: loading.models.users,
 }))
-@Form.create()
+@Form.create({
+  mapPropsToFields,
+})
 class EditUser extends PureComponent {
   state = {
     confirmDirty: false,
@@ -76,9 +89,15 @@ class EditUser extends PureComponent {
   };
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    const { dispatch, match } = this.props;
     dispatch({
       type: 'users/getRoleSelectList',
+    });
+    dispatch({
+      type: 'users/getUserById',
+      payload: {
+        id: match.params.id,
+      },
     });
   }
 
@@ -103,7 +122,7 @@ class EditUser extends PureComponent {
     const {
       dispatch,
       form,
-      users: { role_ids },
+      users: { role_ids, entity },
     } = this.props;
     e.preventDefault();
     form.validateFieldsAndScroll((err, values) => {
@@ -111,13 +130,11 @@ class EditUser extends PureComponent {
         dispatch({
           type: 'users/update',
           payload: {
-            username: values.username,
-            email: values.email,
-            password: values.password,
+            id: entity.id,
             role_ids: role_ids,
           },
         });
-        message.success('添加成功');
+        message.success('操作成功');
         this.handleBackClick();
       }
     });
@@ -137,7 +154,7 @@ class EditUser extends PureComponent {
   }
   render() {
     const {
-      users: { roleSelectList },
+      users: { roleSelectList, role_ids },
       loading,
       form,
     } = this.props;
@@ -206,21 +223,20 @@ class EditUser extends PureComponent {
                 label="角色权限"
                 // help="多选"
               >
-                {getFieldDecorator('role_ids')(
-                  <Select
-                    mode="multiple"
-                    placeholder="请选择角色权限"
-                    onChange={this.handleRoleChange}
-                  >
-                    {roleSelectList.map((item, index) => {
-                      return (
-                        <Option value={item.key} key={item.key}>
-                          {item.name}
-                        </Option>
-                      );
-                    })}
-                  </Select>
-                )}
+                <Select
+                  mode="multiple"
+                  placeholder="请选择角色权限"
+                  onChange={this.handleRoleChange}
+                  value={role_ids || []}
+                >
+                  {roleSelectList.map((item, index) => {
+                    return (
+                      <Option value={item.key} key={item.key}>
+                        {item.name}
+                      </Option>
+                    );
+                  })}
+                </Select>
               </FormItem>
             </Row>
             <Row>

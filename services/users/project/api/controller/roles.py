@@ -74,7 +74,7 @@ def new_role():
     role_desc = post_data.get('desc')
     permissions = post_data.get('permissions')
     try:
-        if role_name and role_desc and permissions:
+        if role_name and permissions:
             role = Role.new_role({'name': role_name, 'desc': role_desc, 'permissions': permissions})
             db.session.add(role)
             db.session.commit()

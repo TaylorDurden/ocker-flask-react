@@ -32,6 +32,7 @@ def add_user():
         'status': 'fail',
         'message': 'Invalid payload.'
     }
+    print("post_data: ", post_data)
     if not post_data:
         return jsonify(response_object), 400
 
@@ -56,8 +57,9 @@ def add_user():
             response_object['message'] = 'Sorry. That email already exists.'
             return jsonify(response_object), 400
     except exc.IntegrityError:
-        db.session.rollback()
-        return jsonify(response_object), 400
+        raise
+        # db.session.rollback()
+        # return jsonify(response_object), 400
 
 
 @users_blueprint.route('/users', methods=['PUT'])
@@ -71,19 +73,16 @@ def edit_user():
         return jsonify(response_object), 400
 
     user_id = post_data.get('id')
-    username = post_data.get('username')
-    email = post_data.get('email')
     role_ids = post_data.get('role_ids')
     # if role_ids and len(role_ids):
     #     role_ids = [int(x) for x in role_ids.split(',')]
     try:
         user = User.query.filter_by(id=int(user_id)).first()
         if user:
-            command = {'id': int(user_id), 'username': username, 'email': email, 'role_ids': role_ids}
+            command = {'id': int(user_id), 'role_ids': role_ids}
             user.edit_user(command)
             db.session.commit()
             response_object['status'] = 'success'
-            response_object['message'] = f'{email} was added!'
             return jsonify(response_object)
         else:
             response_object['message'] = 'Sorry. That email already exists.'
@@ -107,12 +106,7 @@ def get_single_user(user_id):
         else:
             response_object = {
                 'status': 'success',
-                'data': {
-                    'id': user.id,
-                    'username': user.username,
-                    'email': user.email,
-                    'active': user.active
-                }
+                'data': user.to_dict()
             }
             return jsonify(response_object), 200
     except ValueError:
@@ -161,7 +155,7 @@ def get_all_users():
     if sort_by:
         print("sorted: ", sorted(response_object['list'], key=itemgetter(sort_by), reverse=order != "ascend"))
         # response_object['list'] = sorted(response_object['list'], key=itemgetter(sort_by), reverse=order != "ascend")
-        response_object['list'] = sorted(response_object['list'], key=lambda x : x[sort_by], reverse=order != "ascend")
+        response_object['list'] = sorted(response_object['list'], key=lambda x: x[sort_by], reverse=order != "ascend")
     return jsonify(response_object), 200
 
 
@@ -176,11 +170,15 @@ def index():
     return render_template('index.html', users=users)
 
 
-@users_blueprint.route('/users/batch-inactive', methods=['POST'])
-def batch_inactive():   
-    if request.method == 'POST':
-        keys = request.form['key']
-        users = User.query.all()
-        # [user for user in users]
-        # db.session.commit()
-    return render_template('index.html', users=users)
+@users_blueprint.route('/users/set-active', methods=['POST'])
+def set_active():
+    post_data = request.get_json()
+    id = post_data.get('id')
+    active = post_data.get('active')
+    user = User.query.filter_by(id=id).first()
+    if user:
+        user.set_active(active)
+        db.session.commit()
+        return jsonify({'status': 'success'})
+    else:
+        return jsonify({'status': 'fail', 'message': '用户不存在'}), 404

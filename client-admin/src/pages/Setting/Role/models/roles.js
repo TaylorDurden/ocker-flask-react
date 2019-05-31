@@ -38,10 +38,10 @@ export default {
     },
     *update({ payload, callback }, { call, put }) {
       const response = yield call(editRole, payload);
-      // yield put({
-      //   type: 'save',
-      //   payload: response,
-      // });
+      yield put({
+        type: 'save',
+        payload: response,
+      });
       if (callback) callback();
     },
     *getrole({ payload, callback }, { call, put }) {
@@ -60,6 +60,8 @@ export default {
       return {
         ...state,
         data: action.payload,
+        entity: {},
+        selectedPermissions: {},
       };
     },
     get(state, action) {

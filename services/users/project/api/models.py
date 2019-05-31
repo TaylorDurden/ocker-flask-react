@@ -15,6 +15,7 @@ from flask import url_for
 from hashlib import md5
 from project.utils.Role_Module_Permission import Module
 
+
 # from project.api.mixin import PaginatedAPIMixin
 
 followers = db.Table('followers',
@@ -23,20 +24,16 @@ followers = db.Table('followers',
                                db.ForeignKey('user.id')),
                      db.Column('followed_id',
                                db.Integer,
-                               db.ForeignKey('user.id'))
+                               db.ForeignKey('user.id')),
                      )
 
 user_roles = db.Table('user_roles',
-                      db.Column('id',
-                                db.Integer,
-                                primary_key=True,
-                                autoincrement=True),
                       db.Column('user_id',
                                 db.Integer,
                                 db.ForeignKey('user.id')),
                       db.Column('role_id',
                                 db.Integer,
-                                db.ForeignKey('role.id'))
+                                db.ForeignKey('role.id')),
                       )
 
 
@@ -66,6 +63,7 @@ class PaginatedAPIMixin(object):
 
 
 class User(PaginatedAPIMixin, db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(128), nullable=False)
     nickname = db.Column(db.String(64), index=True)
@@ -76,8 +74,7 @@ class User(PaginatedAPIMixin, db.Model):
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     roles = db.relationship(
         'Role', secondary=user_roles,
-        primaryjoin=(user_roles.c.user_id == id),
-        backref=db.backref('roles', lazy='dynamic'), lazy='dynamic')
+        backref=db.backref('users', lazy='dynamic'), lazy='dynamic')
     avatar = db.Column(db.String())
     active = db.Column(db.Boolean(), default=True, nullable=False)
     followed = db.relationship(
@@ -127,12 +124,15 @@ class User(PaginatedAPIMixin, db.Model):
         self.password_hash = generate_password_hash(password)
 
     def edit_user(self, command):
-        self.username = command['username']
         # self.email = command['email']
         if command['role_ids']:
             # self.roles.filter(User.id == int(command['id'])).delete(synchronize_session=False)
             roles = Role.query.filter(Role.id.in_(command['role_ids'])).all()
+            print(roles)
             self.roles = roles
+
+    def set_active(self, active):
+        self.active = active
 
     @staticmethod
     def add_user(command):
@@ -150,7 +150,7 @@ class User(PaginatedAPIMixin, db.Model):
             'active': self.active
         }
 
-    def to_dict(self, include_email):
+    def to_dict(self, include_fields=True):
         data = {
             'id': self.id,
             'key': self.id,
@@ -165,8 +165,9 @@ class User(PaginatedAPIMixin, db.Model):
                 'avatar': self.avatar(128)
             }
         }
-        if include_email:
+        if include_fields:
             data['email'] = self.email
+            data['role_ids'] = [x.id for x in self.roles]
         return data
 
     def encode_auth_token(self, user_id):
@@ -210,7 +211,14 @@ class User(PaginatedAPIMixin, db.Model):
             return 'Invalid token. Please log in again.'
 
 
+class Followers(db.Model):
+    __table_args__ = {'extend_existing': True}
+    __tablename__ = 'followers'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+
 class Post(db.Model):
+    __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.datetime.utcnow)
@@ -251,11 +259,17 @@ class BlacklistToken(db.Model):
             return False
 
 
+class UserRoles(db.Model):
+    __table_args__ = {'extend_existing': True}
+    __tablename__ = 'user_roles'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+
+
 class Role(db.Model, PaginatedAPIMixin):
     """
     Role
     """
-
+    __tablename__ = 'role'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(128), nullable=False)
     desc = db.Column(db.String(256))

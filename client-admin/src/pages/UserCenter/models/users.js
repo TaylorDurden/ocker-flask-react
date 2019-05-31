@@ -1,5 +1,5 @@
 import { queryRule, batchInactive, inactive, addRule, updateRule } from '@/services/api';
-import { query, addUser, editUser } from '@/services/user';
+import { query, addUser, editUser, getUserById, setActive } from '@/services/user';
 import { getRoleSelectList } from '@/services/role';
 
 export default {
@@ -25,30 +25,22 @@ export default {
     },
     *add({ payload, callback }, { call, put }) {
       const response = yield call(addUser, payload);
-      // yield put({
-      //   type: 'save',
-      //   payload: response,
-      // });
-      if (callback) callback();
-    },
-    *edit({ payload, callback }, { call, put }) {
-      const response = yield call(editUser, payload);
-      // yield put({
-      //   type: 'save',
-      //   payload: response,
-      // });
-      if (callback) callback();
-    },
-    *inactive({ payload, callback }, { call, put }) {
-      const response = yield call(inactive, payload);
       yield put({
         type: 'save',
         payload: response,
       });
       if (callback) callback();
     },
-    *batchInactive({ payload, callback }, { call, put }) {
-      const response = yield call(batchInactive, payload);
+    *edit({ payload, callback }, { call, put }) {
+      const response = yield call(editUser, payload);
+      yield put({
+        type: 'save',
+        payload: response,
+      });
+      if (callback) callback();
+    },
+    *setActive({ payload, callback }, { call, put }) {
+      const response = yield call(setActive, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -66,7 +58,15 @@ export default {
         payload: response,
       });
       if (callback) callback();
-    }
+    },
+    *getUserById({ payload, callback }, { call, put }) {
+      const response = yield call(getUserById, payload);
+      yield put({
+        type: 'setUser',
+        payload: response,
+      });
+      if (callback) callback();
+    },
   },
 
   reducers: {
@@ -74,6 +74,9 @@ export default {
       return {
         ...state,
         data: action.payload,
+        entity: {},
+        roleSelectList: [],
+        role_ids: [],
       };
     },
     changeFormValues(state, action) {
@@ -100,6 +103,13 @@ export default {
       return {
         ...state,
         role_ids: action.payload
+      };
+    },
+    setUser(state, action) {
+      return {
+        ...state,
+        entity: action.payload.data,
+        role_ids: action.payload.data.role_ids,
       };
     },
   },
