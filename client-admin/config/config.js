@@ -59,12 +59,15 @@ if (ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site') {
   ]);
 }
 
+const BASE_URL = process.env.NODE_ENV === "production" ? "/" : "/";
+
 export default {
   // add for transfer to umi
   plugins,
   // base: '/usr/share/nginx/html',
   // history: 'hash',
   // exportStatic: true,
+  publicPath: BASE_URL,
   define: {
     ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
       ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION || '', // preview.pro.ant.design only do not use in your production ; preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。

@@ -234,6 +234,7 @@ export default [
         name: 'result',
         icon: 'check-circle-o',
         path: '/result',
+        hideInMenu: true,
         routes: [
           // result
           {
@@ -248,6 +249,7 @@ export default [
         name: 'exception',
         icon: 'warning',
         path: '/exception',
+        hideInMenu: true,
         routes: [
           // exception
           {

@@ -117,42 +117,52 @@ class EditRole extends PureComponent {
   }
 
   onChange = (module, items, checkedList) => {
-    const { dispatch, roles: { selectedPermissions }, } = this.props;
+    const { dispatch, roles: { selectedPermissions, checkAllArray }, } = this.props;
     const modulePermissions = {};
     if(checkedList.length > 0){
       modulePermissions[module] = checkedList;
+      checkAllArray[module] = items.length === checkedList.length;
     }else{
       delete selectedPermissions[module];
+      checkAllArray[module] = false;
     }
 
     const newPermissions = {...selectedPermissions, ...modulePermissions};
     dispatch({
       type: 'roles/changePermission',
-      payload: newPermissions
+      payload: {
+        newPermissions: newPermissions,
+        checkAllArray: checkAllArray,
+      }
     });
 
   };
 
   onCheckAllChange = (module, items, e) => {
-    const { dispatch, roles: { selectedPermissions }, } = this.props;
+    const { dispatch, roles: { selectedPermissions, checkAllArray }, } = this.props;
     const allValues = items.map(item => item.value);
     const modulePermissions = {};
     if(e.target.checked){
       modulePermissions[module] = allValues;
+      checkAllArray[module] = true;
     }else{
       delete selectedPermissions[module];
+      checkAllArray[module] = false;
     }
     // modulePermissions[module] = e.target.checked ? allValues : [];
     const newPermissions = {...selectedPermissions, ...modulePermissions};
     dispatch({
       type: 'roles/changePermission',
-      payload: newPermissions
+      payload: {
+        newPermissions: newPermissions,
+        checkAllArray: checkAllArray,
+      }
     });
   };
 
   render() {
     const {
-      roles: { data, entity, selectedPermissions },
+      roles: { data, entity, selectedPermissions, checkAllArray },
       loading,
       form,
     } = this.props;
@@ -220,7 +230,7 @@ class EditRole extends PureComponent {
                             <Checkbox
                               //indeterminate={this.state.indeterminate}
                               onChange={this.onCheckAllChange.bind(this, item.module, item.permissions)}
-
+                              checked={checkAllArray[item.module]}
                             >
                               {item.module_name}
                             </Checkbox>

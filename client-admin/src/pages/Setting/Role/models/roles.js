@@ -11,6 +11,7 @@ export default {
     },
     entity: {},
     selectedPermissions: {},
+    checkAllArray: {},
   },
 
   effects: {
@@ -65,10 +66,24 @@ export default {
       };
     },
     get(state, action) {
+      const { data } = action.payload;
+      const { permissions } = data;
+      const template = state.data;
+      let checkAllArr = {};
+      template.items.forEach((item, index) => {
+        const { module_permissions } = item;
+        module_permissions.forEach((t, i) => {
+          const checkedIndex = t.module; // 101或201等module值
+          const checkedPermissions = permissions[checkedIndex]; // [0,2,4]
+          const ps = t.permissions;
+          checkAllArr[checkedIndex] = ps.length === checkedPermissions.length;
+        });
+      });
       return {
         ...state,
         entity: action.payload.data,
-        selectedPermissions: action.payload.data.permissions
+        selectedPermissions: action.payload.data.permissions,
+        checkAllArray: checkAllArr,
       };
     },
     changePermission(state, action) {
@@ -78,9 +93,11 @@ export default {
       //     delete checkdPermissions.payload[item]
       //   }
       // })
+      const { newPermissions, checkAllArray } = action.payload;
       return {
         ...state,
-        selectedPermissions: action.payload
+        selectedPermissions: newPermissions || action.payload,
+        checkAllArray: checkAllArray,
       };
     },
     changeFormValues(state, action) {
