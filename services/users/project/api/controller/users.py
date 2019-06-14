@@ -114,7 +114,7 @@ def get_single_user(user_id):
 
 
 @users_blueprint.route('/users', methods=['GET'])
-def get_all_users():
+def get_paged_users():
     """Get all users"""
     print(f"request args: {request.args}")
     username = request.args.get('username', "", type=str)
@@ -146,12 +146,6 @@ def get_all_users():
     print(query)
     response_object = User.to_paged_dict(query, current_page, page_size, 'users.get_all_users')
     print("response_object", response_object)
-    sort_keys = {
-        'last_edit_date': 4,
-        'post_count': 5,
-        'follower_count': 6,
-        'followed_count': 7,
-    }
     if sort_by:
         print("sorted: ", sorted(response_object['list'], key=itemgetter(sort_by), reverse=order != "ascend"))
         # response_object['list'] = sorted(response_object['list'], key=itemgetter(sort_by), reverse=order != "ascend")

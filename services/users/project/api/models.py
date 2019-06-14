@@ -16,7 +16,7 @@ from hashlib import md5
 from project.utils.Role_Module_Permission import Module
 
 
-# from project.api.mixin import PaginatedAPIMixin
+from project.api.mixin import PaginatedAPIMixin
 
 followers = db.Table('followers',
                      db.Column('follower_id',
@@ -37,29 +37,29 @@ user_roles = db.Table('user_roles',
                       )
 
 
-class PaginatedAPIMixin(object):
-    @staticmethod
-    def to_paged_dict(query, page, per_page, include_fields=True, endpoint=None, **kwargs):
-        resources = query.paginate(page, per_page, False)
-        data = {
-            'list': [item.to_dict(include_fields) for item in resources.items],
-            'pagination': {
-                'current': page,
-                'pageSize': per_page,
-                'total_pages': resources.pages,
-                'total': resources.total
-            }
-        }
-        if endpoint:
-            data['_links'] = {
-                'self': url_for(endpoint, page=page, per_page=per_page,
-                                **kwargs),
-                'next': url_for(endpoint, page=page + 1, per_page=per_page,
-                                **kwargs) if resources.has_next else None,
-                'prev': url_for(endpoint, page=page - 1, per_page=per_page,
-                                **kwargs) if resources.has_prev else None
-            }
-        return data
+# class PaginatedAPIMixin(object):
+#     @staticmethod
+#     def to_paged_dict(query, page, per_page, include_fields=True, endpoint=None, **kwargs):
+#         resources = query.paginate(page, per_page, False)
+#         data = {
+#             'list': [item.to_dict(include_fields) for item in resources.items],
+#             'pagination': {
+#                 'current': page,
+#                 'pageSize': per_page,
+#                 'total_pages': resources.pages,
+#                 'total': resources.total
+#             }
+#         }
+#         if endpoint:
+#             data['_links'] = {
+#                 'self': url_for(endpoint, page=page, per_page=per_page,
+#                                 **kwargs),
+#                 'next': url_for(endpoint, page=page + 1, per_page=per_page,
+#                                 **kwargs) if resources.has_next else None,
+#                 'prev': url_for(endpoint, page=page - 1, per_page=per_page,
+#                                 **kwargs) if resources.has_prev else None
+#             }
+#         return data
 
 
 class User(PaginatedAPIMixin, db.Model):
