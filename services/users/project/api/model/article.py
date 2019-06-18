@@ -21,7 +21,6 @@ class Article(db.Model, PaginatedAPIMixin):
     title = db.Column(db.String(128), nullable=False)
     content = db.Column(db.Text(), nullable=False)
     author_name = db.Column(db.String(128))
-    tags = db.relationship('tag', backref='articles', lazy='dynamic')
     open_comment = db.Column(db.Boolean(), default=True, nullable=False)
     created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
     last_edit_date = db.Column(db.DateTime, default=func.now(), nullable=False)
