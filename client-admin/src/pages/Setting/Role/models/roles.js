@@ -75,8 +75,10 @@ export default {
         module_permissions.forEach((t, i) => {
           const checkedIndex = t.module; // 101或201等module值
           const checkedPermissions = permissions[checkedIndex]; // [0,2,4]
-          const ps = t.permissions;
-          checkAllArr[checkedIndex] = ps.length === checkedPermissions.length;
+          if(checkedPermissions){
+            const ps = t.permissions;
+            checkAllArr[checkedIndex] = ps.length === checkedPermissions.length;
+          }
         });
       });
       return {

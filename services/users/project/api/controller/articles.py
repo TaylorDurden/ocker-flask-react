@@ -6,6 +6,7 @@ from project.config import BaseConfig
 from datetime import datetime
 from operator import itemgetter, attrgetter
 from project.utils.Role_Module_Permission import PermissionGroupList
+from project import db
 
 articles_blueprint = Blueprint('articles', __name__, template_folder='../templates')
 
@@ -52,18 +53,20 @@ def add_article():
     content = post_data.get('content')
     author_name = post_data.get('author_name')
     tag_ids = post_data.get('tag_ids')
+    status = post_data.get('status')
+    feature_img = post_data.get('status')
     # if role_ids and len(role_ids):
     #     role_ids = [int(x) for x in role_ids.split(',')]
     try:
         article = Article.query.filter_by(title=title).first()
         if not article:
             command = {'title': title, 'content': content, 'author_name': author_name, 'tag_ids': tag_ids}
-            new_user = User.add_user(command)
-            new_user.set_password(password)
-            db.session.add(new_user)
+            article = Article(title, content, author_name, tag_ids, status, feature_img)
+            # newArticle = Article.add(command)
+            db.session.add(article)
             db.session.commit()
             response_object['status'] = 'success'
-            response_object['message'] = f'{email} was added!'
+            response_object['message'] = f'操作成功!'
             return jsonify(response_object), 201
         else:
             response_object['message'] = 'Sorry. That email already exists.'

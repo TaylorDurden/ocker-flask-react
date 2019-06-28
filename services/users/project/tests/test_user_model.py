@@ -53,7 +53,7 @@ class TestUserModel(BaseTestCase):
         user = User(username='aaa', email='1@test.com')
         db.session.add(user)
         db.session.commit()
-        auth_token = user.encode_auth_token(user.id)
+        auth_token = user.encode_auth_token()
         print(f'auth_token:{auth_token}')
         self.assertTrue(isinstance(auth_token, bytes))
 
@@ -64,7 +64,7 @@ class TestUserModel(BaseTestCase):
         )
         db.session.add(user)
         db.session.commit()
-        auth_token = user.encode_auth_token(user.id)
+        auth_token = user.encode_auth_token()
         self.assertTrue(isinstance(auth_token, bytes))
         self.assertTrue(User.decode_auth_token(auth_token) == user.id)
         self.assertTrue(User.decode_auth_token(

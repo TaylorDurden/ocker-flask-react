@@ -5,6 +5,7 @@ from project import db
 from project.config import BaseConfig
 from project.api.mixin import PaginatedAPIMixin
 
+
 article_tags = db.Table('article_tags',
                      db.Column('follower_id',
                                db.Integer,
@@ -38,6 +39,14 @@ class Article(db.Model, PaginatedAPIMixin):
     def __repr__(self):
         return f'<Article {self.title}>'
 
+    def __init__(self, title, content, author_name, tags, status, feature_img):
+        self.title = title
+        self.content = content
+        self.author_name = author_name
+        self.tags = tags
+        self.status = status
+        self.feature_image = feature_img
+
     def get(self, article_id):
         return self.query.filter_by(id=article_id).first()
 
@@ -63,6 +72,9 @@ class Article(db.Model, PaginatedAPIMixin):
         #     data['email'] = self.email
         #     data['role_ids'] = [x.id for x in self.roles]
         return data
+
+    def add(self, command):
+        pass
 
 
 class Tag(db.Model):

@@ -33,7 +33,7 @@ class RegisterAPI(MethodView):
                 db.session.add(user)
                 db.session.commit()
 
-                auth_token = user.encode_auth_token(user.id)
+                auth_token = user.encode_auth_token()
                 responseObject = {
                     'status': 'success',
                     'message': '注册成功.',
@@ -67,7 +67,7 @@ class LoginAPI(MethodView):
                 email=post_data.get('email')
             ).first()
             if user and user.check_password(post_data.get('password')):
-                auth_token = user.encode_auth_token(user.id)
+                auth_token = user.encode_auth_token()
                 if auth_token:
                     response_obj = {
                         'status': 'success',

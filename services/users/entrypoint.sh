@@ -10,4 +10,4 @@ echo "PostgreSQL started"
 
 #python manage.py db upgrade
 chmod -x manage.py
-python manage.py run -h 0.0.0.0 debug=true
+python manage.py run -h 0.0.0.0
