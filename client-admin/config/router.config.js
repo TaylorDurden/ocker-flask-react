@@ -110,6 +110,18 @@ export default [
           },
         ],
       },
+      // {
+      //   path: '/new',
+      //   icon: 'form',
+      //   name: 'new',
+      //   routes: [
+      //     {
+      //       path: '/new/new-page',
+      //       name: 'newpage',
+      //       component: './New/NewPage',
+      //     },
+      //   ],
+      // },
       // forms
       // {
       //   path: '/form',
